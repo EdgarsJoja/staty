@@ -1,8 +1,6 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>Staty</ion-title>
-  </ion-navbar>
-</ion-header>
-
-<ion-content padding>
+<ion-content>
+  <super-tabs>
+    <super-tab [root]="itemsListPage" title="Items" icon=""></super-tab>
+    <super-tab [root]="statisticsPage" title="Statistics" icon=""></super-tab>
+  </super-tabs>
 </ion-content>
