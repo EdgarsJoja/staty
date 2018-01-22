@@ -9,10 +9,10 @@
             <ion-label stacked>Title *</ion-label>
             <ion-input type="text" formControlName="title"></ion-input>
         </ion-item>
-        <ion-item class="validation-item" *ngIf="itemAddForm.controls.title.hasError('required') && itemAddForm.controls.title.touched">
+        <ion-item class="validation-item" no-lines *ngIf="itemAddForm.controls.title.hasError('required') && itemAddForm.controls.title.touched">
             <p class="validation-msg">This field is required.</p>
         </ion-item>
-        <ion-item class="validation-item" *ngIf="itemAddForm.controls.title.hasError('maxlength') && itemAddForm.controls.title.touched">
+        <ion-item class="validation-item" no-lines *ngIf="itemAddForm.controls.title.hasError('maxlength') && itemAddForm.controls.title.touched">
             <p class="validation-msg">Max length of this field is 30.</p>
         </ion-item>
 
@@ -22,7 +22,7 @@
                 <ion-option *ngFor="let option of unitOptions" value="{{option.value}}">{{option.label}}</ion-option>
             </ion-select>
         </ion-item>
-        <ion-item class="validation-item" *ngIf="itemAddForm.controls.unit.hasError('required') && itemAddForm.controls.unit.touched">
+        <ion-item class="validation-item" no-lines *ngIf="itemAddForm.controls.unit.hasError('required') && itemAddForm.controls.unit.touched">
             <p class="validation-msg">This field is required.</p>
         </ion-item>
 
@@ -30,10 +30,10 @@
             <ion-label stacked>Unit Other *</ion-label>
             <ion-input type="text" formControlName="unit_other"></ion-input>
         </ion-item>
-        <ion-item class="validation-item" *ngIf="showOtherUnitField && itemAddForm.controls.unit_other.hasError('required') && itemAddForm.controls.unit_other.touched">
+        <ion-item class="validation-item" no-lines *ngIf="showOtherUnitField && itemAddForm.controls.unit_other.hasError('required') && itemAddForm.controls.unit_other.touched">
             <p class="validation-msg">This field is required.</p>
         </ion-item>
-        <ion-item class="validation-item" *ngIf="showOtherUnitField && itemAddForm.controls.unit_other.hasError('maxlength') && itemAddForm.controls.unit_other.touched">
+        <ion-item class="validation-item" no-lines *ngIf="showOtherUnitField && itemAddForm.controls.unit_other.hasError('maxlength') && itemAddForm.controls.unit_other.touched">
             <p class="validation-msg">Max length of this field is 10.</p>
         </ion-item>
 
@@ -41,10 +41,10 @@
             <ion-label stacked>Increment *</ion-label>
             <ion-input type="text" formControlName="increment"></ion-input>
         </ion-item>
-        <ion-item class="validation-item" *ngIf="itemAddForm.controls.increment.hasError('required') && itemAddForm.controls.increment.touched">
+        <ion-item class="validation-item" no-lines *ngIf="itemAddForm.controls.increment.hasError('required') && itemAddForm.controls.increment.touched">
             <p class="validation-msg">This field is required.</p>
         </ion-item>
-        <ion-item class="validation-item" *ngIf="itemAddForm.controls.increment.hasError('pattern') && itemAddForm.controls.increment.touched">
+        <ion-item class="validation-item" no-lines *ngIf="itemAddForm.controls.increment.hasError('pattern') && itemAddForm.controls.increment.touched">
             <p class="validation-msg">Please enter a valid number.</p>
         </ion-item>
 
