@@ -1,0 +1,70 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>Add Item</ion-title>
+    </ion-navbar>
+</ion-header>
+<ion-content padding>
+    <form [formGroup]="itemAddForm" (ngSubmit)="submitItemAddForm(itemAddForm.value)">
+        <ion-item [ngClass]="{'error-border':!itemAddForm.controls.title.valid && itemAddForm.controls.title.touched}">
+            <ion-label stacked>Title *</ion-label>
+            <ion-input type="text" formControlName="title"></ion-input>
+        </ion-item>
+        <ion-item class="validation-item" *ngIf="itemAddForm.controls.title.hasError('required') && itemAddForm.controls.title.touched">
+            <p class="validation-msg">This field is required.</p>
+        </ion-item>
+        <ion-item class="validation-item" *ngIf="itemAddForm.controls.title.hasError('maxlength') && itemAddForm.controls.title.touched">
+            <p class="validation-msg">Max length of this field is 30.</p>
+        </ion-item>
+
+        <ion-item [ngClass]="{'error-border':!itemAddForm.controls.unit.valid && itemAddForm.controls.unit.touched}">
+            <ion-label stacked>Unit *</ion-label>
+            <ion-select formControlName="unit" placeholder="None" (ionChange)="toggleOtherUnitField(itemAddForm.controls.unit.value)">
+                <ion-option *ngFor="let option of unitOptions" value="{{option.value}}">{{option.label}}</ion-option>
+            </ion-select>
+        </ion-item>
+        <ion-item class="validation-item" *ngIf="itemAddForm.controls.unit.hasError('required') && itemAddForm.controls.unit.touched">
+            <p class="validation-msg">This field is required.</p>
+        </ion-item>
+
+        <ion-item *ngIf="showOtherUnitField" [ngClass]="{'error-border':!itemAddForm.controls.unit_other.valid && itemAddForm.controls.unit_other.touched}">
+            <ion-label stacked>Unit Other *</ion-label>
+            <ion-input type="text" formControlName="unit_other"></ion-input>
+        </ion-item>
+        <ion-item class="validation-item" *ngIf="showOtherUnitField && itemAddForm.controls.unit_other.hasError('required') && itemAddForm.controls.unit_other.touched">
+            <p class="validation-msg">This field is required.</p>
+        </ion-item>
+        <ion-item class="validation-item" *ngIf="showOtherUnitField && itemAddForm.controls.unit_other.hasError('maxlength') && itemAddForm.controls.unit_other.touched">
+            <p class="validation-msg">Max length of this field is 10.</p>
+        </ion-item>
+
+        <ion-item [ngClass]="{'error-border':!itemAddForm.controls.increment.valid && itemAddForm.controls.increment.touched}">
+            <ion-label stacked>Increment *</ion-label>
+            <ion-input type="text" formControlName="increment"></ion-input>
+        </ion-item>
+        <ion-item class="validation-item" *ngIf="itemAddForm.controls.increment.hasError('required') && itemAddForm.controls.increment.touched">
+            <p class="validation-msg">This field is required.</p>
+        </ion-item>
+        <ion-item class="validation-item" *ngIf="itemAddForm.controls.increment.hasError('pattern') && itemAddForm.controls.increment.touched">
+            <p class="validation-msg">Please enter a valid number.</p>
+        </ion-item>
+
+        <ion-item>
+            <ion-label>Enable resetting</ion-label>
+            <ion-toggle formControlName="reset_enabled" (ionChange)="toggleResetField()"></ion-toggle>
+        </ion-item>
+
+        <ion-item *ngIf="showResetField">
+            <ion-label stacked>Resetting interval</ion-label>
+            <ion-select formControlName="reset" placeholder="None">
+                <ion-option value="d">Daily</ion-option>
+                <ion-option value="w">Weekly</ion-option>
+                <ion-option value="m">Monthly</ion-option>
+                <ion-option value="y">Yearly</ion-option>
+            </ion-select>
+        </ion-item>
+
+        <div padding>
+            <button ion-button type="submit" block [disabled]="!itemAddForm.valid">Add Item</button>
+        </div>
+    </form>
+</ion-content>
