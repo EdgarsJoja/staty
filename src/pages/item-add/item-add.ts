@@ -12,6 +12,7 @@ export class ItemAddPage {
     showOtherUnitField: boolean;
     itemAddForm: FormGroup;
     unitOptions: Array<{}>;
+    resetOptions: Array<{}>;
 
     constructor(public navCtrl: NavController, public formBuilder: FormBuilder, private storage: Storage) {
         this.showResetField = false;
@@ -30,6 +31,12 @@ export class ItemAddPage {
             {'value': 'km', 'label': 'Km'},
             {'value': 'miles', 'label': 'Miles'},
             {'value': 'other', 'label': 'Other'},
+        ];
+        this.resetOptions = [
+            {'value': 'd', 'label': 'Daily'},
+            {'value': 'w', 'label': 'Weekly'},
+            {'value': 'm', 'label': 'Monthly'},
+            {'value': 'y', 'label': 'Yearly'},
         ];
     }
 

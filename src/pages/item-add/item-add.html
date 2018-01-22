@@ -49,17 +49,15 @@
         </ion-item>
 
         <ion-item>
-            <ion-label>Enable resetting</ion-label>
+            <!-- TODO: Add explanation of what this option does or change name to more intuitive -->
+            <ion-label>Enable data reset</ion-label>
             <ion-toggle formControlName="reset_enabled" (ionChange)="toggleResetField()"></ion-toggle>
         </ion-item>
 
         <ion-item *ngIf="showResetField">
-            <ion-label stacked>Resetting interval</ion-label>
+            <ion-label stacked>Reset interval</ion-label>
             <ion-select formControlName="reset" placeholder="None">
-                <ion-option value="d">Daily</ion-option>
-                <ion-option value="w">Weekly</ion-option>
-                <ion-option value="m">Monthly</ion-option>
-                <ion-option value="y">Yearly</ion-option>
+                <ion-option *ngFor="let option of resetOptions" value="{{option.value}}">{{option.label}}</ion-option>
             </ion-select>
         </ion-item>
 
