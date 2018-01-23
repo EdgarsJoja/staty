@@ -1,10 +1,10 @@
 <ion-content padding>
   <ion-list>
-    <ion-item>
-      Item 1
-    </ion-item>
-    <ion-item>
-      Item 2
+    <ion-item *ngFor="let item of items">
+      {{item.title}}
     </ion-item>
   </ion-list>
+  <ion-fab right bottom>
+    <button ion-fab color="primary" (click)="openItemAddView()"><ion-icon name="add"></ion-icon></button>
+  </ion-fab>
 </ion-content>

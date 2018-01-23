@@ -6,35 +6,40 @@ import { Staty } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ItemsListPage } from '../pages/items-list/items-list';
 import { StatisticsPage } from '../pages/statistics/statistics';
+import { ItemAddPage } from '../pages/item-add/item-add';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { SuperTabsModule } from 'ionic2-super-tabs';
 
 @NgModule({
-	declarations: [
-		Staty,
-		HomePage,
-		ItemsListPage,
-		StatisticsPage
-	],
-	imports: [
-		BrowserModule,
-		IonicModule.forRoot(Staty),
-		SuperTabsModule.forRoot()
-	],
-	bootstrap: [IonicApp],
-	entryComponents: [
-		Staty,
-		HomePage,
-		ItemsListPage,
-		StatisticsPage
-	],
-	providers: [
-		StatusBar,
-		SplashScreen,
-		{ provide: ErrorHandler, useClass: IonicErrorHandler }
-	]
+    declarations: [
+        Staty,
+        HomePage,
+        ItemsListPage,
+        StatisticsPage,
+        ItemAddPage
+    ],
+    imports: [
+        BrowserModule,
+        IonicModule.forRoot(Staty),
+        SuperTabsModule.forRoot(),
+        IonicStorageModule.forRoot()
+    ],
+    bootstrap: [IonicApp],
+    entryComponents: [
+        Staty,
+        HomePage,
+        ItemsListPage,
+        StatisticsPage,
+        ItemAddPage
+    ],
+    providers: [
+        StatusBar,
+        SplashScreen,
+        { provide: ErrorHandler, useClass: IonicErrorHandler }
+    ]
 })
 export class AppModule { }
