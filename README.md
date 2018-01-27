@@ -7,3 +7,11 @@
 
 3. Start server
 > ionic serve
+
+4. Testing app
+
+On emulator
+> ionic cordova run android
+
+On device
+> ionic cordova run android --device
