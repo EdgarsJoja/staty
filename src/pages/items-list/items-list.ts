@@ -12,8 +12,18 @@ export class ItemsListPage {
     items: Array<{}>;
 
     constructor(public navCtrl: NavController, public navParams: NavParams, public appCtrl: App, private storage: Storage) {
-        this.storage.get('items').then((value) => {
-            this.items = value || [];
+        this.items = [];
+
+        this.storage.get('items').then((items) => {
+            let itemArr = [];
+
+            for (let id in items) {
+                if (items.hasOwnProperty(id)) {
+                    itemArr.push(items[id]);
+                }
+            }
+
+            this.items = itemArr;
         });
     }
 

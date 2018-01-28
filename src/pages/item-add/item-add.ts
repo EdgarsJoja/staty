@@ -8,13 +8,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
     templateUrl: 'item-add.html'
 })
 export class ItemAddPage {
+    itemsStorageCode: string;
     showResetField: boolean;
     showOtherUnitField: boolean;
     itemAddForm: FormGroup;
     unitOptions: Array<{}>;
     resetOptions: Array<{}>;
 
-    constructor(public navCtrl: NavController, public formBuilder: FormBuilder, private storage: Storage) {
+    constructor(public navCtrl: NavController, public formBuilder: FormBuilder, public storage: Storage) {
+        this.itemsStorageCode = 'items';
         this.showResetField = false;
         this.showOtherUnitField = false;
         this.itemAddForm = formBuilder.group({
@@ -52,11 +54,19 @@ export class ItemAddPage {
                 delete data.unit_other;
             }
 
-            this.storage.get('items').then((value) => {
-                let items = value || [];
+            this.storage.get(this.itemsStorageCode).then((items) => {
+                items = items || {};
+                let newId = null;
 
-                items.push(data);
-                this.storage.set('items', items);
+                // Use timestamp as ID. If item with this ID already exists - re-generate.
+                do {
+                    newId = Date.now();
+                } while (items.hasOwnProperty(newId));
+
+                data.id = newId;
+                data.created_at = newId;
+                items[newId] = data;
+                this.storage.set(this.itemsStorageCode, items);
 
                 // Go back to root (using "goToRoot" instead of "pop" so that the list page gets refreshed).
                 this.navCtrl.goToRoot({
