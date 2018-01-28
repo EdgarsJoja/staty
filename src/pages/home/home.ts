@@ -6,15 +6,15 @@ import { StatisticsPage } from '../statistics/statistics';
 
 @IonicPage()
 @Component({
-	selector: 'page-home',
-	templateUrl: 'home.html',
+    selector: 'page-home',
+    templateUrl: 'home.html',
 })
 export class HomePage {
 
-	itemsListPage: any = ItemsListPage;
-	statisticsPage: any = StatisticsPage;
+    itemsListPage: any = ItemsListPage;
+    statisticsPage: any = StatisticsPage;
 
-	constructor(public navCtrl: NavController, public navParams: NavParams) {
+    constructor(public navCtrl: NavController, public navParams: NavParams) {
 
-	}
+    }
 }
