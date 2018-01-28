@@ -7,6 +7,7 @@ import { HomePage } from '../pages/home/home';
 import { ItemsListPage } from '../pages/items-list/items-list';
 import { StatisticsPage } from '../pages/statistics/statistics';
 import { ItemAddPage } from '../pages/item-add/item-add';
+import { SettingsPage } from '../pages/settings/settings';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -20,7 +21,8 @@ import { SuperTabsModule } from 'ionic2-super-tabs';
         HomePage,
         ItemsListPage,
         StatisticsPage,
-        ItemAddPage
+        ItemAddPage,
+        SettingsPage
     ],
     imports: [
         BrowserModule,
@@ -34,7 +36,8 @@ import { SuperTabsModule } from 'ionic2-super-tabs';
         HomePage,
         ItemsListPage,
         StatisticsPage,
-        ItemAddPage
+        ItemAddPage,
+        SettingsPage
     ],
     providers: [
         StatusBar,

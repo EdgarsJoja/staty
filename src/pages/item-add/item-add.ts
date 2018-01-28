@@ -38,6 +38,7 @@ export class ItemAddPage {
             {'value': 'd', 'label': 'Daily'},
             {'value': 'w', 'label': 'Weekly'},
             {'value': 'm', 'label': 'Monthly'},
+            {'value': 'q', 'label': 'Quarterly'},
             {'value': 'y', 'label': 'Yearly'},
         ];
     }

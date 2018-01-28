@@ -1,0 +1,33 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>Settings</ion-title>
+    </ion-navbar>
+</ion-header>
+<ion-content padding>
+    <form [formGroup]="settingsForm" (ngSubmit)="submitSettingsForm(settingsForm.value)">
+        <ion-item>
+            <ion-label stacked>Default statistics period</ion-label>
+            <ion-select formControlName="statistics_period">
+                <ion-option *ngFor="let option of statisticsPeriodOptions" value="{{option.value}}">{{option.label}}</ion-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item>
+            <ion-label stacked>Default statistics chart type</ion-label>
+            <ion-select formControlName="statistics_type">
+                <ion-option *ngFor="let option of statisticsTypeOptions" value="{{option.value}}">{{option.label}}</ion-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item>
+            <ion-label>Dark mode</ion-label>
+            <ion-toggle formControlName="dark_mode"></ion-toggle>
+        </ion-item>
+
+        <div padding>
+            <button ion-button type="submit" block>Save settings</button>
+            <button ion-button block [disabled]="isDefaultSettings" (click)="resetAllToDefault()">Reset back to default settings</button>
+            <button ion-button block [disabled]="" (click)="resetAllTrackItems()">Reset all statistics</button>
+        </div>
+    </form>
+</ion-content>

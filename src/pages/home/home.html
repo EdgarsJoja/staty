@@ -1,3 +1,11 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>STATY</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="openSettingsView()"><ion-icon name="settings"></ion-icon></button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
 <ion-content>
   <super-tabs>
     <super-tab [root]="itemsListPage" title="Items" icon=""></super-tab>
