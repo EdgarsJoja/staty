@@ -20,8 +20,18 @@ export class ItemsListPage {
         public actionSheetCtrl: ActionSheetController,
         public alertCtrl: AlertController
     ) {
-        this.storage.get('items').then((value) => {
-            this.items = value || [];
+        this.items = [];
+
+        this.storage.get('items').then((items) => {
+            let itemArr = [];
+
+            for (let id in items) {
+                if (items.hasOwnProperty(id)) {
+                    itemArr.push(items[id]);
+                }
+            }
+
+            this.items = itemArr;
         });
     }
 
