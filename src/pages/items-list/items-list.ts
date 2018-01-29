@@ -28,7 +28,7 @@ export class ItemsListPage {
     /**
      * Shows action sheet with item options
      */
-    showItemActions(itemTitle) {
+    showItemActions(itemTitle: String) {
         let itemActions = this.actionSheetCtrl.create({
             title: `${itemTitle} options`,
             buttons: [
@@ -67,7 +67,7 @@ export class ItemsListPage {
     /**
      * Show confirmation alert, when attempting to delete item
      */
-    showDeleteConfirm(itemTitle) {
+    showDeleteConfirm(itemTitle: String) {
         let confirm = this.alertCtrl.create({
             title: `Delete ${itemTitle}?`,
             message: `Do you really want to delete ${itemTitle} item?`,
