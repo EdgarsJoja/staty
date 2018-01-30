@@ -1,5 +1,5 @@
 <ion-content padding>
-  <ion-list>
+  <ion-list reorder="true" (ionItemReorder)="reorderItems($event)">
     <ion-item *ngFor="let item of items" (click)="showItemActions(item.title)">
       <p>{{ item.title }}</p>
       <!-- @todo: Get actual value -->

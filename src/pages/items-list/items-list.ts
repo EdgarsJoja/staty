@@ -1,5 +1,13 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams, App, ActionSheetController, AlertController} from 'ionic-angular';
+import {
+    IonicPage,
+    NavController,
+    NavParams,
+    App,
+    ActionSheetController,
+    AlertController,
+    reorderArray
+} from 'ionic-angular';
 import {Storage} from '@ionic/storage';
 import {ItemAddPage} from '../item-add/item-add';
 
@@ -98,6 +106,16 @@ export class ItemsListPage {
         });
 
         confirm.present();
+    }
+
+    /**
+     * Reorder list items and update storage
+     *
+     * @param indexes
+     */
+    reorderItems(indexes) {
+        this.items = reorderArray(this.items, indexes);
+        this.storage.set('items', this.items);
     }
 
     openItemAddView() {
