@@ -45,16 +45,18 @@ export class ItemsListPage {
 
     /**
      * Shows action sheet with item options
+     *
+     * @param item
      */
-    showItemActions(itemTitle: String) {
+    showItemActions(item) {
         let itemActions = this.actionSheetCtrl.create({
-            title: `${itemTitle} options`,
+            title: `${item.title} options`,
             buttons: [
                 {
                     text: 'Delete',
                     icon: 'remove',
                     handler: () => {
-                        this.showDeleteConfirm(itemTitle);
+                        this.showDeleteConfirm(item.title);
                     }
                 },
                 {
@@ -67,7 +69,7 @@ export class ItemsListPage {
                     text: 'Edit',
                     icon: 'create',
                     handler: () => {
-                        // @todo: Open item edit view
+                        this.openItemAddView(item);
                     }
                 }, {
                     text: 'Cancel',
@@ -84,6 +86,8 @@ export class ItemsListPage {
 
     /**
      * Show confirmation alert, when attempting to delete item
+     *
+     * @param {String} itemTitle
      */
     showDeleteConfirm(itemTitle: String) {
         let confirm = this.alertCtrl.create({
@@ -118,7 +122,14 @@ export class ItemsListPage {
         this.storage.set('items', this.items);
     }
 
-    openItemAddView() {
-        this.appCtrl.getRootNav().push(ItemAddPage);
+    /**
+     * Opens Edit/Add item view
+     *
+     * @param {{}} item
+     */
+    openItemAddView(item = {}) {
+        this.appCtrl.getRootNav().push(ItemAddPage, {
+            item: item
+        });
     }
 }
