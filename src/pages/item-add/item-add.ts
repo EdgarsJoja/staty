@@ -74,7 +74,7 @@ export class ItemAddPage {
             }
 
             this.storage.get(this.itemsStorageCode).then((items) => {
-                items = items || {};
+                items = items || [];
                 let newId = null;
 
                 // Use timestamp as ID. If item with this ID already exists - re-generate.
