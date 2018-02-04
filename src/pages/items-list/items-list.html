@@ -4,7 +4,7 @@
       <p>{{ item.title }}</p>
       <!-- @todo: Get actual value -->
       <strong item-right>{{ 6 }}</strong>
-      <h3 item-right>{{ item.unit }}</h3>
+      <h3 item-right>{{ item.unit !== 'other' ? item.unit : item.unit_other }}</h3>
     </ion-item>
   </ion-list>
 

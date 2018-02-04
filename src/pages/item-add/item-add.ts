@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 /**
  * Item interface
  */
-interface Item {
+interface ItemInterface {
     id: Date,
     created_at: Date,
     increment: string,
@@ -28,13 +28,14 @@ export class ItemAddPage {
     itemAddForm: FormGroup;
     unitOptions: Array<{}>;
     resetOptions: Array<{}>;
-    item: Item;
+    item: ItemInterface;
 
     constructor(public navCtrl: NavController, public formBuilder: FormBuilder, public storage: Storage, public navParams: NavParams) {
-        this.itemsStorageCode = 'items';
-        this.showResetField = false;
-        this.showOtherUnitField = false;
         this.item = this.navParams.get('item') || {};
+
+        this.itemsStorageCode = 'items';
+        this.showResetField = this.item.reset_enabled === true;
+        this.showOtherUnitField = this.item.unit === 'other';
 
         this.itemAddForm = formBuilder.group({
             title: [this.item.title, Validators.compose([Validators.required, Validators.maxLength(30)])],
@@ -68,13 +69,8 @@ export class ItemAddPage {
                 data.reset = '';
             }
 
-            if (data.unit === 'other') {
-                data.unit = data.unit_other;
-                delete data.unit_other;
-            }
-
             this.storage.get(this.itemsStorageCode).then((items) => {
-                items = items || {};
+                items = items || [];
                 let newId = null;
 
                 // Use timestamp as ID. If item with this ID already exists - re-generate.
