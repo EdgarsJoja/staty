@@ -58,35 +58,19 @@ export class ItemAddPage {
                 data.reset = '';
             }
 
-            this.itemProvider.getAllItems().then((items) => {
-                items = items || [];
-                let newId = null;
+            let newId = Date.now();
 
-                // Use timestamp as ID. If item with this ID already exists - re-generate.
-                do {
-                    newId = Date.now();
-                } while (items.hasOwnProperty(newId));
+            data.id = newId.toString();
+            data.created_at = newId;
 
-                newId = Date.now();
-                // Find existing item
-                let itemIdx = items.findIndex((item) => item.id === this.item.id);
-
-                // If found, add edited data
-                if (itemIdx !== -1) {
-                    items[itemIdx] = Object.assign(items[itemIdx], data);
-                } else {
-                    data.id = newId.toString();
-                    data.created_at = newId;
-                    items.push(data);
+            this.itemProvider.saveItem(data).then((status) => {
+                if (status) {
+                    // Go back to root (using "goToRoot" instead of "pop" so that the list page gets refreshed).
+                    this.navCtrl.goToRoot({
+                        updateUrl: false,
+                        isNavRoot: true
+                    });
                 }
-
-                this.itemProvider.saveItems(items);
-
-                // Go back to root (using "goToRoot" instead of "pop" so that the list page gets refreshed).
-                this.navCtrl.goToRoot({
-                    updateUrl: false,
-                    isNavRoot: true
-                });
             });
         }
     }

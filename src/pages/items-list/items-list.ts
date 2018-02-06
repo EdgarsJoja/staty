@@ -94,7 +94,7 @@ export class ItemsListPage {
                 {
                     text: 'Yes',
                     handler: () => {
-                        this.itemProvider.deleteItemById(item.id).then((id) => {
+                        this.itemProvider.deleteItem(item.id).then((id) => {
                             this.items.splice(this.items.findIndex((item) => item.id === id),1);
                         });
                     }

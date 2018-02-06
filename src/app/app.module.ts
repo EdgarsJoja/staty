@@ -14,6 +14,7 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { SuperTabsModule } from 'ionic2-super-tabs';
 import { ItemProvider } from '../providers/item/item';
+import { IncrementProvider } from '../providers/increment/increment';
 
 @NgModule({
     declarations: [
@@ -41,7 +42,8 @@ import { ItemProvider } from '../providers/item/item';
         StatusBar,
         SplashScreen,
         { provide: ErrorHandler, useClass: IonicErrorHandler },
-        ItemProvider
+        ItemProvider,
+        IncrementProvider
     ]
 })
 export class AppModule { }
