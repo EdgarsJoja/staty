@@ -13,6 +13,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicStorageModule } from '@ionic/storage';
 
 import { SuperTabsModule } from 'ionic2-super-tabs';
+import { ItemProvider } from '../providers/item/item';
 
 @NgModule({
     declarations: [
@@ -39,7 +40,8 @@ import { SuperTabsModule } from 'ionic2-super-tabs';
     providers: [
         StatusBar,
         SplashScreen,
-        { provide: ErrorHandler, useClass: IonicErrorHandler }
+        { provide: ErrorHandler, useClass: IonicErrorHandler },
+        ItemProvider
     ]
 })
 export class AppModule { }

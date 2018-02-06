@@ -8,8 +8,9 @@ import {
     AlertController,
     reorderArray
 } from 'ionic-angular';
-import {Storage} from '@ionic/storage';
+
 import {ItemAddPage} from '../item-add/item-add';
+import {ItemInterface, ItemProvider} from "../../providers/item/item";
 
 @IonicPage()
 @Component({
@@ -17,29 +18,19 @@ import {ItemAddPage} from '../item-add/item-add';
     templateUrl: 'items-list.html',
 })
 export class ItemsListPage {
-    items: Array<{}>;
+    items: Array<ItemInterface>;
 
     constructor
     (
         public navCtrl: NavController,
         public navParams: NavParams,
         public appCtrl: App,
-        private storage: Storage,
         public actionSheetCtrl: ActionSheetController,
-        public alertCtrl: AlertController
+        public alertCtrl: AlertController,
+        private itemProvider: ItemProvider
     ) {
-        this.items = [];
-
-        this.storage.get('items').then((items) => {
-            let itemArr = [];
-
-            for (let id in items) {
-                if (items.hasOwnProperty(id)) {
-                    itemArr.push(items[id]);
-                }
-            }
-
-            this.items = itemArr;
+        this.itemProvider.getAllItems().then((items) => {
+            this.items = items;
         });
     }
 
@@ -56,7 +47,7 @@ export class ItemsListPage {
                     text: 'Delete',
                     icon: 'remove',
                     handler: () => {
-                        this.showDeleteConfirm(item.title);
+                        this.showDeleteConfirm(item);
                     }
                 },
                 {
@@ -87,12 +78,12 @@ export class ItemsListPage {
     /**
      * Show confirmation alert, when attempting to delete item
      *
-     * @param {String} itemTitle
+     * @param item
      */
-    showDeleteConfirm(itemTitle: String) {
+    showDeleteConfirm(item) {
         let confirm = this.alertCtrl.create({
-            title: `Delete ${itemTitle}?`,
-            message: `Do you really want to delete ${itemTitle} item?`,
+            title: `Delete ${item.title}?`,
+            message: `Do you really want to delete ${item.title} item?`,
             buttons: [
                 {
                     text: 'No',
@@ -103,7 +94,9 @@ export class ItemsListPage {
                 {
                     text: 'Yes',
                     handler: () => {
-                        // @todo: Add delete fty
+                        this.itemProvider.deleteItemById(item.id).then((id) => {
+                            this.items.splice(this.items.findIndex((item) => item.id === id),1);
+                        });
                     }
                 }
             ]
@@ -119,7 +112,7 @@ export class ItemsListPage {
      */
     reorderItems(indexes) {
         this.items = reorderArray(this.items, indexes);
-        this.storage.set('items', this.items);
+        this.itemProvider.saveItems(this.items);
     }
 
     /**

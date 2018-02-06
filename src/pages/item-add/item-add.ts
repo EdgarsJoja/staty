@@ -1,28 +1,13 @@
 import { Component } from '@angular/core';
 import {NavController, NavParams} from 'ionic-angular';
-import { Storage } from '@ionic/storage';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-/**
- * Item interface
- */
-interface ItemInterface {
-    id: Date,
-    created_at: Date,
-    increment: string,
-    reset: string,
-    reset_enabled: boolean,
-    title: string,
-    unit: string,
-    unit_other: string
-}
+import {ItemInterface, ItemProvider} from "../../providers/item/item";
 
 @Component({
     selector: 'page-item-add',
     templateUrl: 'item-add.html'
 })
 export class ItemAddPage {
-    itemsStorageCode: string;
     showResetField: boolean;
     showOtherUnitField: boolean;
     itemAddForm: FormGroup;
@@ -30,10 +15,14 @@ export class ItemAddPage {
     resetOptions: Array<{}>;
     item: ItemInterface;
 
-    constructor(public navCtrl: NavController, public formBuilder: FormBuilder, public storage: Storage, public navParams: NavParams) {
+    constructor(
+        public navCtrl: NavController,
+        public formBuilder: FormBuilder,
+        public navParams: NavParams,
+        private itemProvider: ItemProvider
+    ) {
         this.item = this.navParams.get('item') || {};
 
-        this.itemsStorageCode = 'items';
         this.showResetField = this.item.reset_enabled === true;
         this.showOtherUnitField = this.item.unit === 'other';
 
@@ -69,7 +58,7 @@ export class ItemAddPage {
                 data.reset = '';
             }
 
-            this.storage.get(this.itemsStorageCode).then((items) => {
+            this.itemProvider.getAllItems().then((items) => {
                 items = items || [];
                 let newId = null;
 
@@ -86,12 +75,12 @@ export class ItemAddPage {
                 if (itemIdx !== -1) {
                     items[itemIdx] = Object.assign(items[itemIdx], data);
                 } else {
-                    data.id = newId;
+                    data.id = newId.toString();
                     data.created_at = newId;
                     items.push(data);
                 }
 
-                this.storage.set(this.itemsStorageCode, items);
+                this.itemProvider.saveItems(items);
 
                 // Go back to root (using "goToRoot" instead of "pop" so that the list page gets refreshed).
                 this.navCtrl.goToRoot({
