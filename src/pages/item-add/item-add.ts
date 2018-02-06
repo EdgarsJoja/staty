@@ -58,10 +58,11 @@ export class ItemAddPage {
                 data.reset = '';
             }
 
-            let newId = Date.now();
-
-            data.id = newId.toString();
-            data.created_at = newId;
+            if (!this.item.id) {
+                let newId = Date.now();
+                data.id = newId.toString();
+                data.created_at = newId;
+            }
 
             this.itemProvider.saveItem(data).then((status) => {
                 if (status) {
