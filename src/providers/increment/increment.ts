@@ -60,4 +60,37 @@ export class IncrementProvider {
     public deleteItemIncrements(itemId) {
         return this.storage.remove(this.getItemIncrementStorageKey(itemId));
     }
+
+    /**
+     * Delete all increments from storage
+     *
+     * @returns {Promise<any>}
+     */
+    public deleteAllIncrements() {
+        let self = this;
+        return self.storage.keys().then(function (keys) {
+            for (let i = 0; i < keys.length; i++) {
+                if (keys[i].indexOf(`${INCREMENT_STORAGE_CODE_PREFIX}`) !== -1) {
+                    self.storage.remove(keys[i]);
+                }
+            }
+        });
+    }
+
+    /**
+     * Check if customer has added any increments
+     *
+     * @returns {Promise<boolean>}
+     */
+    public hasAnyIncrements() {
+        return this.storage.keys().then(function (keys) {
+            for (let i = 0; i < keys.length; i++) {
+                if (keys[i].indexOf(`${INCREMENT_STORAGE_CODE_PREFIX}`) !== -1) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
 }
