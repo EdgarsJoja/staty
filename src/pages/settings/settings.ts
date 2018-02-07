@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, AlertController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import {IncrementProvider} from '../../providers/increment/increment';
 
 @Component({
     selector: 'page-settings',
@@ -10,6 +11,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class SettingsPage {
     settingsStorageCode: string = 'settings';
     isDefaultSettings: boolean = false;
+    hasNoIncrements: boolean = true;
+    isSaving: boolean = false;
+    isSaved: boolean = false;
+    savingTimeout: number;
+    savedTimeout: number;
 
     settingsForm: FormGroup;
     settings: {statistics_period, statistics_type, dark_mode};
@@ -31,8 +37,9 @@ export class SettingsPage {
     constructor(
         public navCtrl: NavController,
         public formBuilder: FormBuilder,
-        private storage: Storage,
-        private alertCtrl: AlertController
+        public storage: Storage,
+        public alertCtrl: AlertController,
+        public incrementProvider: IncrementProvider
     ) {
         this.settingsForm = this.formBuilder.group({
             statistics_period: [''],
@@ -42,32 +49,61 @@ export class SettingsPage {
     }
 
     ngOnInit() {
-        this.storage.get(this.settingsStorageCode).then((settings) => {
-            this.settings = settings || this.defaultSettings;
+        let self = this;
 
-            this.settingsForm.setValue({
-                statistics_period: this.settings.statistics_period,
-                statistics_type: this.settings.statistics_type,
-                dark_mode: this.settings.dark_mode,
+        self.storage.get(self.settingsStorageCode).then((settings) => {
+            self.settings = settings || self.defaultSettings;
+
+            self.settingsForm.setValue({
+                statistics_period: self.settings.statistics_period,
+                statistics_type: self.settings.statistics_type,
+                dark_mode: self.settings.dark_mode,
             });
 
-            this.isDefaultSettings = (this.settings.statistics_period === this.defaultSettings.statistics_period
-                && this.settings.statistics_type === this.defaultSettings.statistics_type
-                && this.settings.dark_mode === this.defaultSettings.dark_mode);
+            self.isDefaultSettings = (self.settings.statistics_period === self.defaultSettings.statistics_period
+                && self.settings.statistics_type === self.defaultSettings.statistics_type
+                && self.settings.dark_mode === self.defaultSettings.dark_mode);
+        });
+
+        self.incrementProvider.hasAnyIncrements().then(function (value) {
+            self.hasNoIncrements = !value;
         });
     }
 
-    submitSettingsForm(data) {
-        this.storage.set(this.settingsStorageCode, data);
-        this.isDefaultSettings = (data.statistics_period === this.defaultSettings.statistics_period
-            && data.statistics_type === this.defaultSettings.statistics_type
-            && data.dark_mode === this.defaultSettings.dark_mode);
+    ngOnDestroy() {
+        this.isSaving = this.isSaved = false;
+    }
+
+    submitSettingsForm() {
+        let self = this,
+            data = self.settingsForm.value;
+
+        self.isSaved = false;
+        self.isSaving = true;
+
+        clearTimeout(self.savingTimeout);
+        clearTimeout(self.savedTimeout);
+
+        self.storage.set(self.settingsStorageCode, data).then(function () {
+            self.savingTimeout = setTimeout(function () {
+                self.isSaving = false;
+                self.isSaved = true;
+
+                self.savedTimeout = setTimeout(function () {
+                    self.isSaved = false;
+                }, 500)
+            }, 500)
+        });
+
+        self.isDefaultSettings = (data.statistics_period === self.defaultSettings.statistics_period
+            && data.statistics_type === self.defaultSettings.statistics_type
+            && data.dark_mode === self.defaultSettings.dark_mode);
     }
 
     resetAllToDefault() {
         let alert = this.alertCtrl.create({
             title: 'Confirm reset',
-            message: 'Do you want to reset all the settings back to defaults?',
+            message: 'Are you sure you want to reset all the settings back to default?',
             buttons: [
                 {
                     text: 'Cancel',
@@ -77,9 +113,8 @@ export class SettingsPage {
                 {
                     text: 'OK',
                     handler: () => {
-                        this.storage.set(this.settingsStorageCode, this.defaultSettings);
                         this.settingsForm.setValue(this.defaultSettings);
-                        this.isDefaultSettings = true;
+                        this.submitSettingsForm();
                     }
                 }
             ]
@@ -88,23 +123,27 @@ export class SettingsPage {
     }
 
     resetAllTrackItems() {
-        let alert = this.alertCtrl.create({
-            title: 'Confirm reset',
-            message: 'Do you want to reset all tracking items?',
-            buttons: [
-                {
-                    text: 'Cancel',
-                    role: 'cancel',
-                    handler: () => {}
-                },
-                {
-                    text: 'OK',
-                    handler: () => {
-                        // TODO: Add reset f-ty
+        let self = this,
+            alert = self.alertCtrl.create({
+                title: 'Confirm reset',
+                message: 'Are you sure you want to delete all tracked data?',
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        role: 'cancel',
+                        handler: () => {
+                        }
+                    },
+                    {
+                        text: 'OK',
+                        handler: () => {
+                            self.incrementProvider.deleteAllIncrements().then(function () {
+                                self.hasNoIncrements = true;
+                            });
+                        }
                     }
-                }
-            ]
-        });
+                ]
+            });
         alert.present();
     }
 }
