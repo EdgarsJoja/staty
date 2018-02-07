@@ -16,14 +16,11 @@
             <p class="validation-msg">Max length of this field is 30.</p>
         </ion-item>
 
-        <ion-item [ngClass]="{'error-border':!itemAddForm.controls.unit.valid && itemAddForm.controls.unit.touched}">
-            <ion-label stacked>Unit *</ion-label>
+        <ion-item>
+            <ion-label stacked>Unit</ion-label>
             <ion-select formControlName="unit" placeholder="None" (ionChange)="toggleOtherUnitField(itemAddForm.controls.unit.value)">
                 <ion-option *ngFor="let option of unitOptions" value="{{option.value}}">{{option.label}}</ion-option>
             </ion-select>
-        </ion-item>
-        <ion-item class="validation-item" no-lines *ngIf="itemAddForm.controls.unit.hasError('required') && itemAddForm.controls.unit.touched">
-            <p class="validation-msg">This field is required.</p>
         </ion-item>
 
         <ion-item *ngIf="showOtherUnitField" [ngClass]="{'error-border':!itemAddForm.controls.unit_other.valid && itemAddForm.controls.unit_other.touched}">

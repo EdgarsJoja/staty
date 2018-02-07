@@ -26,9 +26,13 @@ export class ItemAddPage {
         this.showResetField = this.item.reset_enabled === true;
         this.showOtherUnitField = this.item.unit === 'other';
 
+        if (!this.item.unit) {
+            this.item.unit = '';
+        }
+
         this.itemAddForm = formBuilder.group({
             title: [this.item.title, Validators.compose([Validators.required, Validators.maxLength(30)])],
-            unit: [this.item.unit, Validators.compose([Validators.required])],
+            unit: [this.item.unit],
             unit_other: [this.item.unit_other],
             increment: [this.item.increment, Validators.compose([Validators.required, Validators.pattern('^[1-9][0-9]*')])],
             reset_enabled: [this.item.reset_enabled],
@@ -37,6 +41,7 @@ export class ItemAddPage {
             created_at: [this.item.created_at],
         });
         this.unitOptions = [
+            {'value': '', 'label': 'None'},
             {'value': 'kg', 'label': 'Kg'},
             {'value': 'lbs', 'label': 'Lbs'},
             {'value': 'km', 'label': 'Km'},
