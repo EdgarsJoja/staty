@@ -1,31 +1,40 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
-import { Storage } from '@ionic/storage';
+import {NavController, NavParams} from 'ionic-angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {ItemInterface, ItemProvider} from "../../providers/item/item";
 
 @Component({
     selector: 'page-item-add',
     templateUrl: 'item-add.html'
 })
 export class ItemAddPage {
-    itemsStorageCode: string;
     showResetField: boolean;
     showOtherUnitField: boolean;
     itemAddForm: FormGroup;
     unitOptions: Array<{}>;
     resetOptions: Array<{}>;
+    item: ItemInterface;
 
-    constructor(public navCtrl: NavController, public formBuilder: FormBuilder, public storage: Storage) {
-        this.itemsStorageCode = 'items';
-        this.showResetField = false;
-        this.showOtherUnitField = false;
+    constructor(
+        public navCtrl: NavController,
+        public formBuilder: FormBuilder,
+        public navParams: NavParams,
+        private itemProvider: ItemProvider
+    ) {
+        this.item = this.navParams.get('item') || {};
+
+        this.showResetField = this.item.reset_enabled === true;
+        this.showOtherUnitField = this.item.unit === 'other';
+
         this.itemAddForm = formBuilder.group({
-            title: ['', Validators.compose([Validators.required, Validators.maxLength(30)])],
-            unit: ['', Validators.compose([Validators.required])],
-            unit_other: [''],
-            increment: ['', Validators.compose([Validators.required, Validators.pattern('^[1-9][0-9]*')])],
-            reset_enabled: [false],
-            reset: ['']
+            title: [this.item.title, Validators.compose([Validators.required, Validators.maxLength(30)])],
+            unit: [this.item.unit, Validators.compose([Validators.required])],
+            unit_other: [this.item.unit_other],
+            increment: [this.item.increment, Validators.compose([Validators.required, Validators.pattern('^[1-9][0-9]*')])],
+            reset_enabled: [this.item.reset_enabled],
+            reset: [this.item.reset],
+            id: [this.item.id],
+            created_at: [this.item.created_at],
         });
         this.unitOptions = [
             {'value': 'kg', 'label': 'Kg'},
@@ -50,30 +59,20 @@ export class ItemAddPage {
                 data.reset = '';
             }
 
-            if (data.unit === 'other') {
-                data.unit = data.unit_other;
-                delete data.unit_other;
+            if (!this.item.id) {
+                let newId = Date.now();
+                data.id = newId.toString();
+                data.created_at = newId;
             }
 
-            this.storage.get(this.itemsStorageCode).then((items) => {
-                items = items || {};
-                let newId = null;
-
-                // Use timestamp as ID. If item with this ID already exists - re-generate.
-                do {
-                    newId = Date.now();
-                } while (items.hasOwnProperty(newId));
-
-                data.id = newId;
-                data.created_at = newId;
-                items[newId] = data;
-                this.storage.set(this.itemsStorageCode, items);
-
-                // Go back to root (using "goToRoot" instead of "pop" so that the list page gets refreshed).
-                this.navCtrl.goToRoot({
-                    updateUrl: false,
-                    isNavRoot: true
-                });
+            this.itemProvider.saveItem(data).then((status) => {
+                if (status) {
+                    // Go back to root (using "goToRoot" instead of "pop" so that the list page gets refreshed).
+                    this.navCtrl.goToRoot({
+                        updateUrl: false,
+                        isNavRoot: true
+                    });
+                }
             });
         }
     }

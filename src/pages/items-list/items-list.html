@@ -1,9 +1,13 @@
 <ion-content padding>
-  <ion-list>
-    <ion-item *ngFor="let item of items">
-      {{item.title}}
+  <ion-list reorder="true" (ionItemReorder)="reorderItems($event)">
+    <ion-item *ngFor="let item of items" (click)="showItemActions(item)">
+      <p>{{ item.title }}</p>
+      <!-- @todo: Get actual value -->
+      <strong item-right>{{ 6 }}</strong>
+      <h3 item-right>{{ item.unit !== 'other' ? item.unit : item.unit_other }}</h3>
     </ion-item>
   </ion-list>
+
   <ion-fab right bottom>
     <button ion-fab color="primary" (click)="openItemAddView()"><ion-icon name="add"></ion-icon></button>
   </ion-fab>
