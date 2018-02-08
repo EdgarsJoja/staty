@@ -68,10 +68,10 @@ export class IncrementProvider {
      */
     public deleteAllIncrements() {
         let self = this;
-        return self.storage.keys().then(function (keys) {
+        return self.storage.keys().then(keys => {
             for (let i = 0; i < keys.length; i++) {
                 if (keys[i].indexOf(`${INCREMENT_STORAGE_CODE_PREFIX}`) !== -1) {
-                    self.storage.remove(keys[i]);
+                    self.storage.set(keys[i], []);
                 }
             }
         });
@@ -83,14 +83,14 @@ export class IncrementProvider {
      * @returns {Promise<boolean>}
      */
     public hasAnyIncrements() {
-        return this.storage.keys().then(function (keys) {
-            for (let i = 0; i < keys.length; i++) {
-                if (keys[i].indexOf(`${INCREMENT_STORAGE_CODE_PREFIX}`) !== -1) {
-                    return true;
-                }
-            }
+        let hasIncrements = false;
 
-            return false;
+        return this.storage.forEach((value, key) => {
+            if (key.indexOf(`${INCREMENT_STORAGE_CODE_PREFIX}`) !== -1 && value && value.length) {
+                hasIncrements = true;
+            }
+        }).then(() => {
+            return hasIncrements;
         });
     }
 }
