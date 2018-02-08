@@ -65,7 +65,7 @@ export class SettingsPage {
                 && self.settings.dark_mode === self.defaultSettings.dark_mode);
         });
 
-        self.incrementProvider.hasAnyIncrements().then(function (value) {
+        self.incrementProvider.hasAnyIncrements().then(value => {
             self.hasNoIncrements = !value;
         });
     }
@@ -84,12 +84,12 @@ export class SettingsPage {
         clearTimeout(self.savingTimeout);
         clearTimeout(self.savedTimeout);
 
-        self.storage.set(self.settingsStorageCode, data).then(function () {
-            self.savingTimeout = setTimeout(function () {
+        self.storage.set(self.settingsStorageCode, data).then(() => {
+            self.savingTimeout = setTimeout(() => {
                 self.isSaving = false;
                 self.isSaved = true;
 
-                self.savedTimeout = setTimeout(function () {
+                self.savedTimeout = setTimeout(() => {
                     self.isSaved = false;
                 }, 500)
             }, 500)
@@ -137,7 +137,7 @@ export class SettingsPage {
                     {
                         text: 'OK',
                         handler: () => {
-                            self.incrementProvider.deleteAllIncrements().then(function () {
+                            self.incrementProvider.deleteAllIncrements().then(() => {
                                 self.hasNoIncrements = true;
                             });
                         }
