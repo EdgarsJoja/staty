@@ -2,8 +2,7 @@
   <ion-list reorder="true" (ionItemReorder)="reorderItems($event)">
     <ion-item *ngFor="let item of items" (click)="showItemActions(item)">
       <p>{{ item.title }}</p>
-      <!-- @todo: Get actual value -->
-      <strong item-right>{{ 6 }}</strong>
+      <strong item-right>{{ item.total_increment }}</strong>
       <h3 item-right>{{ item.unit !== 'other' ? item.unit : item.unit_other }}</h3>
     </ion-item>
   </ion-list>

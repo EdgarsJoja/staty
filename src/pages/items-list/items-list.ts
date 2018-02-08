@@ -10,7 +10,9 @@ import {
 } from 'ionic-angular';
 
 import {ItemAddPage} from '../item-add/item-add';
-import {ItemInterface, ItemProvider} from "../../providers/item/item";
+import {ItemInterface, ItemProvider} from '../../providers/item/item';
+import {IncrementProvider} from '../../providers/increment/increment';
+import {ResetIntervalProvider} from '../../providers/reset-interval/reset-interval';
 
 @IonicPage()
 @Component({
@@ -27,10 +29,40 @@ export class ItemsListPage {
         public appCtrl: App,
         public actionSheetCtrl: ActionSheetController,
         public alertCtrl: AlertController,
-        private itemProvider: ItemProvider
+        private itemProvider: ItemProvider,
+        private incrementProvider: IncrementProvider,
+        private resetIntervalProvider: ResetIntervalProvider
     ) {
         this.itemProvider.getAllItems().then((items) => {
             this.items = items;
+
+            this.items.forEach(item => {
+                this.getItemTotalIncrementValue(item).then(value => {
+                    item.total_increment = value;
+                });
+            });
+        });
+    }
+
+    /**
+     * Calculate currently active reset interval increment.
+     *
+     * @param {ItemInterface} item
+     * @returns {Promise<number>}
+     */
+    getItemTotalIncrementValue(item) {
+        let totalIncrementValue = 0;
+        return this.incrementProvider.getItemIncrements(item.id).then(increments => {
+            increments.filter(increment => {
+                if (!item.reset_enabled || increment.created_at >= this.resetIntervalProvider.getIntervalStartDate(item.reset)) {
+                    totalIncrementValue += parseFloat(increment.value);
+                    return true;
+                }
+
+                return false;
+            });
+
+            return totalIncrementValue;
         });
     }
 
@@ -54,7 +86,7 @@ export class ItemsListPage {
                     text: 'Increment',
                     icon: 'add',
                     handler: () => {
-                        // @todo: Add action to increase item value by set default increment value
+                        this.addItemIncrement(item);
                     }
                 }, {
                     text: 'Edit',
@@ -73,6 +105,28 @@ export class ItemsListPage {
         });
 
         itemActions.present();
+    }
+
+    /**
+     * Add new item increment.
+     *
+     * @param item
+     */
+    addItemIncrement(item) {
+        this.incrementProvider.getItemIncrements(item.id).then((increments) => {
+            increments.push({
+                id: item.id,
+                value: item.increment,
+                unit: item.unit === 'other' ? item.unit_other : item.unit,
+                created_at: Date.now().toString()
+            });
+
+            this.incrementProvider.saveItemIncrements(item.id, increments).then(() => {
+                this.getItemTotalIncrementValue(item).then(value => {
+                    item.total_increment = value;
+                });
+            });
+        });
     }
 
     /**

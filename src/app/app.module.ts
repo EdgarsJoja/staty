@@ -16,6 +16,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { SuperTabsModule } from 'ionic2-super-tabs';
 import { ItemProvider } from '../providers/item/item';
 import { IncrementProvider } from '../providers/increment/increment';
+import { ResetIntervalProvider } from '../providers/reset-interval/reset-interval';
 
 @NgModule({
     declarations: [
@@ -46,7 +47,8 @@ import { IncrementProvider } from '../providers/increment/increment';
         SplashScreen,
         { provide: ErrorHandler, useClass: IonicErrorHandler },
         ItemProvider,
-        IncrementProvider
+        IncrementProvider,
+        ResetIntervalProvider
     ]
 })
 export class AppModule { }
