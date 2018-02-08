@@ -70,8 +70,15 @@ export class SettingsPage {
         });
     }
 
-    ngOnDestroy() {
+    ionViewWillLeave() {
         this.isSaving = this.isSaved = false;
+
+        // TODO: Find better solution to refresh the list page
+        // Refresh list item page.
+        this.navCtrl.goToRoot({
+            updateUrl: false,
+            isNavRoot: true
+        });
     }
 
     submitSettingsForm() {
