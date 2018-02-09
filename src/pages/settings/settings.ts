@@ -49,24 +49,22 @@ export class SettingsPage {
     }
 
     ngOnInit() {
-        let self = this;
+        this.storage.get(this.settingsStorageCode).then((settings) => {
+            this.settings = settings || this.defaultSettings;
 
-        self.storage.get(self.settingsStorageCode).then((settings) => {
-            self.settings = settings || self.defaultSettings;
-
-            self.settingsForm.setValue({
-                statistics_period: self.settings.statistics_period,
-                statistics_type: self.settings.statistics_type,
-                dark_mode: self.settings.dark_mode,
+            this.settingsForm.setValue({
+                statistics_period: this.settings.statistics_period,
+                statistics_type: this.settings.statistics_type,
+                dark_mode: this.settings.dark_mode,
             });
 
-            self.isDefaultSettings = (self.settings.statistics_period === self.defaultSettings.statistics_period
-                && self.settings.statistics_type === self.defaultSettings.statistics_type
-                && self.settings.dark_mode === self.defaultSettings.dark_mode);
+            this.isDefaultSettings = (this.settings.statistics_period === this.defaultSettings.statistics_period
+                && this.settings.statistics_type === this.defaultSettings.statistics_type
+                && this.settings.dark_mode === this.defaultSettings.dark_mode);
         });
 
-        self.incrementProvider.hasAnyIncrements().then(value => {
-            self.hasNoIncrements = !value;
+        this.incrementProvider.hasAnyIncrements().then(value => {
+            this.hasNoIncrements = !value;
         });
     }
 
@@ -82,29 +80,28 @@ export class SettingsPage {
     }
 
     submitSettingsForm() {
-        let self = this,
-            data = self.settingsForm.value;
+        let data = this.settingsForm.value;
 
-        self.isSaved = false;
-        self.isSaving = true;
+        this.isSaved = false;
+        this.isSaving = true;
 
-        clearTimeout(self.savingTimeout);
-        clearTimeout(self.savedTimeout);
+        clearTimeout(this.savingTimeout);
+        clearTimeout(this.savedTimeout);
 
-        self.storage.set(self.settingsStorageCode, data).then(() => {
-            self.savingTimeout = setTimeout(() => {
-                self.isSaving = false;
-                self.isSaved = true;
+        this.storage.set(this.settingsStorageCode, data).then(() => {
+            this.savingTimeout = setTimeout(() => {
+                this.isSaving = false;
+                this.isSaved = true;
 
-                self.savedTimeout = setTimeout(() => {
-                    self.isSaved = false;
+                this.savedTimeout = setTimeout(() => {
+                    this.isSaved = false;
                 }, 500)
             }, 500)
         });
 
-        self.isDefaultSettings = (data.statistics_period === self.defaultSettings.statistics_period
-            && data.statistics_type === self.defaultSettings.statistics_type
-            && data.dark_mode === self.defaultSettings.dark_mode);
+        this.isDefaultSettings = (data.statistics_period === this.defaultSettings.statistics_period
+            && data.statistics_type === this.defaultSettings.statistics_type
+            && data.dark_mode === this.defaultSettings.dark_mode);
     }
 
     resetAllToDefault() {
@@ -130,8 +127,7 @@ export class SettingsPage {
     }
 
     resetAllTrackItems() {
-        let self = this,
-            alert = self.alertCtrl.create({
+        let alert = this.alertCtrl.create({
                 title: 'Confirm reset',
                 message: 'Are you sure you want to delete all tracked data?',
                 buttons: [
@@ -144,8 +140,8 @@ export class SettingsPage {
                     {
                         text: 'OK',
                         handler: () => {
-                            self.incrementProvider.deleteAllIncrements().then(() => {
-                                self.hasNoIncrements = true;
+                            this.incrementProvider.deleteAllIncrements().then(() => {
+                                this.hasNoIncrements = true;
                             });
                         }
                     }
