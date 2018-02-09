@@ -39,9 +39,21 @@ export class ItemsListPage {
             this.items.forEach(item => {
                 this.getItemTotalIncrementValue(item).then(value => {
                     item.total_increment = value;
+                    item.total_text = this.getItemTotalValueText(item);
                 });
             });
         });
+    }
+
+    /**
+     * Generate total value text
+     *
+     * @param item
+     * @returns {string}
+     */
+    getItemTotalValueText(item) {
+        // @todo: Add different text based on item interval
+        return `Total ${item.total_increment} ${item.unit !== 'other' ? item.unit : item.unit_other}`;
     }
 
     /**
@@ -113,19 +125,16 @@ export class ItemsListPage {
      * @param item
      */
     addItemIncrement(item) {
-        this.incrementProvider.getItemIncrements(item.id).then((increments) => {
-            increments.push({
-                id: item.id,
-                value: item.increment,
-                unit: item.unit === 'other' ? item.unit_other : item.unit,
-                created_at: Date.now().toString()
-            });
+        // To not trigger action sheet for item
+        event.stopPropagation();
 
-            this.incrementProvider.saveItemIncrements(item.id, increments).then(() => {
-                this.getItemTotalIncrementValue(item).then(value => {
+        this.incrementProvider.addItemIncrement(item).then((status) => {
+            if (status) {
+                this.getItemTotalIncrementValue(item).then((value) => {
                     item.total_increment = value;
+                    item.total_text = this.getItemTotalValueText(item);
                 });
-            });
+            }
         });
     }
 

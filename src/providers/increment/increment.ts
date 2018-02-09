@@ -93,4 +93,26 @@ export class IncrementProvider {
             return hasIncrements;
         });
     }
+
+    /**
+     * Add new item increment.
+     *
+     * @param item
+     * @param {boolean} value
+     * @returns {Promise<any>}
+     */
+    addItemIncrement(item, value = false) {
+        return this.getItemIncrements(item.id).then((increments) => {
+            increments.push({
+                id: item.id,
+                value: value ? value : item.increment,
+                unit: item.unit === 'other' ? item.unit_other : item.unit,
+                created_at: Date.now().toString()
+            });
+
+            return this.saveItemIncrements(item.id, increments).then((increments) => {
+                return true;
+            });
+        });
+    }
 }
