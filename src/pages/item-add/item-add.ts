@@ -34,7 +34,7 @@ export class ItemAddPage {
             title: [this.item.title, Validators.compose([Validators.required, Validators.maxLength(30)])],
             unit: [this.item.unit],
             unit_other: [this.item.unit_other],
-            increment: [this.item.increment, Validators.compose([Validators.required, Validators.pattern('^[1-9][0-9]*')])],
+            increment: [this.item.increment, Validators.compose([Validators.required, Validators.pattern('^([0-9]+[.])?[0-9]+')])],
             reset_enabled: [this.item.reset_enabled],
             reset: [this.item.reset],
             id: [this.item.id],
