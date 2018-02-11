@@ -13,6 +13,7 @@ import {ItemAddPage} from '../item-add/item-add';
 import {ItemInterface, ItemProvider} from '../../providers/item/item';
 import {IncrementProvider} from '../../providers/increment/increment';
 import {ResetIntervalProvider} from '../../providers/reset-interval/reset-interval';
+import {SettingsProvider} from '../../providers/settings/settings';
 
 @IonicPage()
 @Component({
@@ -31,10 +32,11 @@ export class ItemsListPage {
         public alertCtrl: AlertController,
         private itemProvider: ItemProvider,
         private incrementProvider: IncrementProvider,
-        private resetIntervalProvider: ResetIntervalProvider
+        private resetIntervalProvider: ResetIntervalProvider,
+        private settingsProvider: SettingsProvider
     ) {
         this.itemProvider.getAllItems().then((items) => {
-            this.items = items;
+            this.items = items || [];
 
             this.items.forEach(item => {
                 this.getItemTotalIncrementValue(item).then(value => {
@@ -65,16 +67,21 @@ export class ItemsListPage {
     getItemTotalIncrementValue(item) {
         let totalIncrementValue = 0;
         return this.incrementProvider.getItemIncrements(item.id).then(increments => {
-            increments.filter(increment => {
-                if (!item.reset_enabled || increment.created_at >= this.resetIntervalProvider.getIntervalStartDate(item.reset)) {
-                    totalIncrementValue += parseFloat(increment.value);
-                    return true;
-                }
+            if (!increments) {
+                return totalIncrementValue;
+            }
 
-                return false;
+            return this.settingsProvider.getSettings().then(settings => {
+                increments.forEach(increment => {
+                    if (!item.reset_enabled
+                        || increment.created_at >= this.resetIntervalProvider.getIntervalStartDate(item.reset, settings.first_day_of_week)
+                    ) {
+                        totalIncrementValue += parseFloat(increment.value);
+                    }
+                });
+
+                return totalIncrementValue;
             });
-
-            return totalIncrementValue;
         });
     }
 

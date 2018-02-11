@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class ResetIntervalProvider {
@@ -8,15 +8,16 @@ export class ResetIntervalProvider {
      * Get starting date of an interval of specified type.
      *
      * @param {string} interval
+     * @param {string} firstDayOfWeek
      * @param {Date} date
      * @returns {number|null}
      */
-    public getIntervalStartDate(interval, date = new Date()) {
+    public getIntervalStartDate(interval, firstDayOfWeek = 'monday', date = new Date()) {
         switch (interval) {
             case 'd':
                 return this.getStartOfTheDay(date);
             case 'w':
-                return this.getStartOfTheWeek(date);
+                return this.getStartOfTheWeek(date, firstDayOfWeek);
             case 'm':
                 return this.getStartOfTheMonth(date);
             case 'q':
@@ -32,15 +33,16 @@ export class ResetIntervalProvider {
      * Get end date of an interval of specified type.
      *
      * @param {string} interval
+     * @param {string} firstDayOfWeek
      * @param {Date} date
      * @returns {number|null}
      */
-    public getIntervalEndDate(interval, date = new Date()) {
+    public getIntervalEndDate(interval, firstDayOfWeek = 'monday', date = new Date()) {
         switch (interval) {
             case 'd':
                 return this.getEndOfTheDay(date);
             case 'w':
-                return this.getEndOfTheWeek(date);
+                return this.getEndOfTheWeek(date, firstDayOfWeek);
             case 'm':
                 return this.getEndOfTheMonth(date);
             case 'q':
@@ -76,10 +78,11 @@ export class ResetIntervalProvider {
      * Get the first day of the week.
      *
      * @param {Date} date
+     * @param {string} firstDayOfWeek
      * @returns {number}
      */
-    private getStartOfTheWeek(date) {
-        let day = date.getDay() || 7,
+    private getStartOfTheWeek(date, firstDayOfWeek) {
+        let day = firstDayOfWeek === 'sunday' ? date.getDay() + 1 : date.getDay() || 7,
             diff = date.getDate() - day + 1;
 
         date = new Date(date.setDate(diff));
@@ -91,10 +94,11 @@ export class ResetIntervalProvider {
      * Get the last day of the week.
      *
      * @param {Date} date
+     * @param {string} firstDayOfWeek
      * @returns {number}
      */
-    private getEndOfTheWeek(date) {
-        let day = date.getDay() || 7,
+    private getEndOfTheWeek(date, firstDayOfWeek) {
+        let day = firstDayOfWeek === 'sunday' ? date.getDay() + 1 : date.getDay() || 7,
             diff = date.getDate() - day + 7;
 
         date = new Date(date.setDate(diff));

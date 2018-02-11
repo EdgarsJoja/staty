@@ -28,6 +28,13 @@
         </ion-item>
 
         <ion-item>
+            <ion-label stacked>First day of the week</ion-label>
+            <ion-select formControlName="first_day_of_week" (ionChange)="submitSettingsForm()">
+                <ion-option *ngFor="let option of firstDayOfWeekOptions" value="{{option.value}}">{{option.label}}</ion-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item>
             <ion-label>Dark mode</ion-label>
             <ion-toggle formControlName="dark_mode" (ionChange)="submitSettingsForm()"></ion-toggle>
         </ion-item>
