@@ -47,6 +47,15 @@ export class SettingsProvider {
     }
 
     /**
+     * Get default settings.
+     *
+     * @returns {SettingsInterface}
+     */
+    public getDefaultSettings() {
+        return this.getDefinedSettings('d', 'bar', 'monday', false);
+    }
+
+    /**
      * Return setting object with given values.
      *
      * @param {any} statisticsPeriod

@@ -19,7 +19,7 @@ export class SettingsPage {
 
     settingsForm: FormGroup;
     settings: SettingsInterface;
-    defaultSettings: SettingsInterface = this.settingsProvider.getDefinedSettings('d', 'bar', 'monday', false);
+    defaultSettings: SettingsInterface = this.settingsProvider.getDefaultSettings();
 
     statisticsPeriodOptions: Array<SelectOptionInterface> = this.settingsProvider.getStatisticsPeriodOptions();
     statisticsTypeOptions: Array<SelectOptionInterface> = this.settingsProvider.getStatisticsTypeOptions();
