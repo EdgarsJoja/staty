@@ -80,7 +80,8 @@ export class ItemsListPage {
                     }
                 });
 
-                return totalIncrementValue;
+                // Max 3 decimal places
+                return Math.round(totalIncrementValue * 1000) / 1000;
             });
         });
     }
