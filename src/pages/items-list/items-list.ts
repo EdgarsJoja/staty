@@ -13,6 +13,7 @@ import {ItemAddPage} from '../item-add/item-add';
 import {ItemInterface, ItemProvider} from '../../providers/item/item';
 import {IncrementProvider} from '../../providers/increment/increment';
 import {ResetIntervalProvider} from '../../providers/reset-interval/reset-interval';
+import {SettingsProvider} from '../../providers/settings/settings';
 
 @IonicPage()
 @Component({
@@ -31,7 +32,8 @@ export class ItemsListPage {
         public alertCtrl: AlertController,
         private itemProvider: ItemProvider,
         private incrementProvider: IncrementProvider,
-        private resetIntervalProvider: ResetIntervalProvider
+        private resetIntervalProvider: ResetIntervalProvider,
+        private settingsProvider: SettingsProvider
     ) {
         this.itemProvider.getAllItems().then((items) => {
             this.items = items || [];
@@ -65,15 +67,21 @@ export class ItemsListPage {
     getItemTotalIncrementValue(item) {
         let totalIncrementValue = 0;
         return this.incrementProvider.getItemIncrements(item.id).then(increments => {
-            if (increments) {
+            if (!increments) {
+                return totalIncrementValue;
+            }
+
+            return this.settingsProvider.getSettings().then(settings => {
                 increments.forEach(increment => {
-                    if (!item.reset_enabled || increment.created_at >= this.resetIntervalProvider.getIntervalStartDate(item.reset)) {
+                    if (!item.reset_enabled
+                        || increment.created_at >= this.resetIntervalProvider.getIntervalStartDate(item.reset, settings.first_day_of_week)
+                    ) {
                         totalIncrementValue += parseFloat(increment.value);
                     }
                 });
-            }
 
-            return totalIncrementValue;
+                return totalIncrementValue;
+            });
         });
     }
 
