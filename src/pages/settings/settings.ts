@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { NavController, AlertController } from 'ionic-angular';
-import { Storage } from '@ionic/storage';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import {IncrementProvider} from '../../providers/increment/increment';
+import { IncrementProvider } from '../../providers/increment/increment';
+import { SettingsInterface, SelectOptionInterface, SettingsProvider } from '../../providers/settings/settings';
 
 @Component({
     selector: 'page-settings',
@@ -18,49 +18,35 @@ export class SettingsPage {
     savedTimeout: number;
 
     settingsForm: FormGroup;
-    settings: {statistics_period, statistics_type, dark_mode};
-    defaultSettings: {statistics_period, statistics_type, dark_mode} = { statistics_period: 'd', statistics_type: 'bar', dark_mode: false };
+    settings: SettingsInterface;
+    defaultSettings: SettingsInterface = this.settingsProvider.getDefinedSettings('d', 'bar', 'monday', false);
 
-    statisticsPeriodOptions: Array<{}> = [
-        {'value': 'd', 'label': 'Day'},
-        {'value': 'w', 'label': 'Week'},
-        {'value': 'm', 'label': 'Month'},
-        {'value': 'q', 'label': 'Quarter'},
-        {'value': 'y', 'label': 'Year'}
-    ];
-    statisticsTypeOptions: Array<{}> = [
-        {'value': 'line', 'label': 'Line'},
-        {'value': 'pie', 'label': 'Pie'},
-        {'value': 'bar', 'label': 'Bar'}
-    ];
+    statisticsPeriodOptions: Array<SelectOptionInterface> = this.settingsProvider.getStatisticsPeriodOptions();
+    statisticsTypeOptions: Array<SelectOptionInterface> = this.settingsProvider.getStatisticsTypeOptions();
+    firstDayOfWeekOptions: Array<SelectOptionInterface> = this.settingsProvider.getFirstDayOfWeekOptions();
 
     constructor(
         public navCtrl: NavController,
         public formBuilder: FormBuilder,
-        public storage: Storage,
         public alertCtrl: AlertController,
-        public incrementProvider: IncrementProvider
+        public incrementProvider: IncrementProvider,
+        public settingsProvider: SettingsProvider
     ) {
-        this.settingsForm = this.formBuilder.group({
-            statistics_period: [''],
-            statistics_type: [''],
-            dark_mode: [false],
-        });
+        this.settingsForm = this.formBuilder.group(this.settingsProvider.getDefinedSettings([''], [''], [''], [false]));
     }
 
     ngOnInit() {
-        this.storage.get(this.settingsStorageCode).then((settings) => {
+        this.settingsProvider.getSettings().then((settings) => {
             this.settings = settings || this.defaultSettings;
 
-            this.settingsForm.setValue({
-                statistics_period: this.settings.statistics_period,
-                statistics_type: this.settings.statistics_type,
-                dark_mode: this.settings.dark_mode,
-            });
+            this.settingsForm.setValue(this.settingsProvider.getDefinedSettings(
+                this.settings.statistics_period,
+                this.settings.statistics_type,
+                this.settings.first_day_of_week,
+                this.settings.dark_mode
+            ));
 
-            this.isDefaultSettings = (this.settings.statistics_period === this.defaultSettings.statistics_period
-                && this.settings.statistics_type === this.defaultSettings.statistics_type
-                && this.settings.dark_mode === this.defaultSettings.dark_mode);
+            this.isDefaultSettings = this.settingsProvider.areEqual(this.settings, this.defaultSettings);
         });
 
         this.incrementProvider.hasAnyIncrements().then(value => {
@@ -88,7 +74,7 @@ export class SettingsPage {
         clearTimeout(this.savingTimeout);
         clearTimeout(this.savedTimeout);
 
-        this.storage.set(this.settingsStorageCode, data).then(() => {
+        this.settingsProvider.saveSettings(data).then(() => {
             this.savingTimeout = setTimeout(() => {
                 this.isSaving = false;
                 this.isSaved = true;
@@ -99,9 +85,7 @@ export class SettingsPage {
             }, 500)
         });
 
-        this.isDefaultSettings = (data.statistics_period === this.defaultSettings.statistics_period
-            && data.statistics_type === this.defaultSettings.statistics_type
-            && data.dark_mode === this.defaultSettings.dark_mode);
+        this.isDefaultSettings = this.settingsProvider.areEqual(data, this.defaultSettings);
     }
 
     resetAllToDefault() {
@@ -128,25 +112,25 @@ export class SettingsPage {
 
     resetAllTrackItems() {
         let alert = this.alertCtrl.create({
-                title: 'Confirm reset',
-                message: 'Are you sure you want to delete all tracked data?',
-                buttons: [
-                    {
-                        text: 'Cancel',
-                        role: 'cancel',
-                        handler: () => {
-                        }
-                    },
-                    {
-                        text: 'OK',
-                        handler: () => {
-                            this.incrementProvider.deleteAllIncrements().then(() => {
-                                this.hasNoIncrements = true;
-                            });
-                        }
+            title: 'Confirm reset',
+            message: 'Are you sure you want to delete all tracked data?',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    handler: () => {
                     }
-                ]
-            });
+                },
+                {
+                    text: 'OK',
+                    handler: () => {
+                        this.incrementProvider.deleteAllIncrements().then(() => {
+                            this.hasNoIncrements = true;
+                        });
+                    }
+                }
+            ]
+        });
         alert.present();
     }
 }

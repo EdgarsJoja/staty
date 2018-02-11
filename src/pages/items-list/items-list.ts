@@ -34,7 +34,7 @@ export class ItemsListPage {
         private resetIntervalProvider: ResetIntervalProvider
     ) {
         this.itemProvider.getAllItems().then((items) => {
-            this.items = items;
+            this.items = items || [];
 
             this.items.forEach(item => {
                 this.getItemTotalIncrementValue(item).then(value => {
@@ -65,14 +65,13 @@ export class ItemsListPage {
     getItemTotalIncrementValue(item) {
         let totalIncrementValue = 0;
         return this.incrementProvider.getItemIncrements(item.id).then(increments => {
-            increments.filter(increment => {
-                if (!item.reset_enabled || increment.created_at >= this.resetIntervalProvider.getIntervalStartDate(item.reset)) {
-                    totalIncrementValue += parseFloat(increment.value);
-                    return true;
-                }
-
-                return false;
-            });
+            if (increments) {
+                increments.forEach(increment => {
+                    if (!item.reset_enabled || increment.created_at >= this.resetIntervalProvider.getIntervalStartDate(item.reset)) {
+                        totalIncrementValue += parseFloat(increment.value);
+                    }
+                });
+            }
 
             return totalIncrementValue;
         });

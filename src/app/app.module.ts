@@ -17,6 +17,7 @@ import { SuperTabsModule } from 'ionic2-super-tabs';
 import { ItemProvider } from '../providers/item/item';
 import { IncrementProvider } from '../providers/increment/increment';
 import { ResetIntervalProvider } from '../providers/reset-interval/reset-interval';
+import { SettingsProvider } from '../providers/settings/settings';
 
 @NgModule({
     declarations: [
@@ -48,7 +49,8 @@ import { ResetIntervalProvider } from '../providers/reset-interval/reset-interva
         { provide: ErrorHandler, useClass: IonicErrorHandler },
         ItemProvider,
         IncrementProvider,
-        ResetIntervalProvider
+        ResetIntervalProvider,
+        SettingsProvider
     ]
 })
 export class AppModule { }
