@@ -59,7 +59,11 @@
         </ion-item>
 
         <div padding>
-            <button ion-button type="submit" block [disabled]="!itemAddForm.valid">Add Item</button>
+            <button ion-button type="submit" block [disabled]="!itemAddForm.valid">Save Item</button>
         </div>
     </form>
+
+    <div *ngIf="item && item.id" padding class="increments">
+        <button ion-button block color="danger" (click)="showResetStatisticsConfirm(item)">Reset statistics</button>
+    </div>
 </ion-content>

@@ -6,7 +6,8 @@ import {
     App,
     ActionSheetController,
     AlertController,
-    reorderArray
+    reorderArray,
+    Events
 } from 'ionic-angular';
 
 import {ItemAddPage} from '../item-add/item-add';
@@ -21,7 +22,7 @@ import {SettingsProvider} from '../../providers/settings/settings';
     templateUrl: 'items-list.html',
 })
 export class ItemsListPage {
-    items: Array<ItemInterface>;
+    items: Array<ItemInterface> = [];
 
     constructor
     (
@@ -33,17 +34,13 @@ export class ItemsListPage {
         private itemProvider: ItemProvider,
         private incrementProvider: IncrementProvider,
         private resetIntervalProvider: ResetIntervalProvider,
-        private settingsProvider: SettingsProvider
+        private settingsProvider: SettingsProvider,
+        private events: Events
     ) {
-        this.itemProvider.getAllItems().then((items) => {
-            this.items = items || [];
+        this.recalculateIncrements();
 
-            this.items.forEach(item => {
-                this.getItemTotalIncrementValue(item).then(value => {
-                    item.total_increment = value;
-                    item.total_text = this.getItemTotalValueText(item);
-                });
-            });
+        this.events.subscribe('increments:recalculate', () => {
+            this.recalculateIncrements();
         });
     }
 
@@ -194,6 +191,22 @@ export class ItemsListPage {
     openItemAddView(item = {}) {
         this.appCtrl.getRootNav().push(ItemAddPage, {
             item: item
+        });
+    }
+
+    /**
+     * Recalculates increment values for all items
+     */
+    private recalculateIncrements() {
+        this.itemProvider.getAllItems().then((items) => {
+            this.items = items || [];
+
+            this.items.forEach(item => {
+                this.getItemTotalIncrementValue(item).then(value => {
+                    item.total_increment = value;
+                    item.total_text = this.getItemTotalValueText(item);
+                });
+            });
         });
     }
 }
