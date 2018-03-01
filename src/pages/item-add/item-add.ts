@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import {NavController, NavParams} from 'ionic-angular';
+import { AlertController, NavController, NavParams, Events } from 'ionic-angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {ItemInterface, ItemProvider} from "../../providers/item/item";
+import { ItemInterface, ItemProvider } from "../../providers/item/item";
+import { IncrementProvider } from "../../providers/increment/increment";
 
 @Component({
     selector: 'page-item-add',
@@ -19,7 +20,10 @@ export class ItemAddPage {
         public navCtrl: NavController,
         public formBuilder: FormBuilder,
         public navParams: NavParams,
-        private itemProvider: ItemProvider
+        private itemProvider: ItemProvider,
+        private alertCtrl: AlertController,
+        private incrementProvider: IncrementProvider,
+        private events: Events
     ) {
         this.item = this.navParams.get('item') || {};
 
@@ -95,5 +99,36 @@ export class ItemAddPage {
 
     toggleResetField() {
         this.showResetField = !this.showResetField;
+    }
+
+    /**
+     * Show confirmation alert, when attempting to delete all increments
+     *
+     * @param item
+     */
+    showResetStatisticsConfirm(item) {
+        let confirm = this.alertCtrl.create({
+            title: `Delete all ${item.title} statistics?`,
+            message: `This will remove all statistics for ${item.title}`,
+            buttons: [
+                {
+                    text: 'No',
+                    handler: () => {
+
+                    }
+                },
+                {
+                    text: 'Yes',
+                    handler: () => {
+                        this.incrementProvider.deleteItemIncrements(item.id).then(() => {
+                            // Force items list view to recalculate increments
+                            this.events.publish('increments:recalculate');
+                        });
+                    }
+                }
+            ]
+        });
+
+        confirm.present();
     }
 }

@@ -58,7 +58,7 @@ export class IncrementProvider {
      * @returns {Promise<any>}
      */
     public deleteItemIncrements(itemId) {
-        return this.storage.remove(this.getItemIncrementStorageKey(itemId));
+        return this.storage.set(this.getItemIncrementStorageKey(itemId), []);
     }
 
     /**
