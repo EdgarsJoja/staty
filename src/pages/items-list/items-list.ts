@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import {
     IonicPage,
     NavController,
@@ -7,14 +7,17 @@ import {
     ActionSheetController,
     AlertController,
     reorderArray,
-    Events
+    Events,
+    ModalController
 } from 'ionic-angular';
 
-import {ItemAddPage} from '../item-add/item-add';
-import {ItemInterface, ItemProvider} from '../../providers/item/item';
-import {IncrementProvider} from '../../providers/increment/increment';
-import {ResetIntervalProvider} from '../../providers/reset-interval/reset-interval';
-import {SettingsProvider} from '../../providers/settings/settings';
+import { ItemAddPage } from '../item-add/item-add';
+import { AdvancedIncrementAddPage } from '../advanced-increment-add/advanced-increment-add';
+
+import { ItemInterface, ItemProvider } from '../../providers/item/item';
+import { IncrementProvider } from '../../providers/increment/increment';
+import { ResetIntervalProvider } from '../../providers/reset-interval/reset-interval';
+import { SettingsProvider } from '../../providers/settings/settings';
 
 @IonicPage()
 @Component({
@@ -35,7 +38,8 @@ export class ItemsListPage {
         private incrementProvider: IncrementProvider,
         private resetIntervalProvider: ResetIntervalProvider,
         private settingsProvider: SettingsProvider,
-        private events: Events
+        private events: Events,
+        private modalCtrl: ModalController
     ) {
         this.recalculateIncrements();
 
@@ -100,10 +104,10 @@ export class ItemsListPage {
                     }
                 },
                 {
-                    text: 'Increment',
+                    text: 'Advanced',
                     icon: 'add',
                     handler: () => {
-                        this.addItemIncrement(item);
+                        this.openAdvancedPopup(item);
                     }
                 }, {
                     text: 'Edit',
@@ -208,5 +212,18 @@ export class ItemsListPage {
                 });
             });
         });
+    }
+
+
+    /**
+     * private openAdvancedPopup - Opens advanced increment form
+     *
+     * @param  {Item} item = {} Item
+     */
+    private openAdvancedPopup(item = {}) {
+        let advancedIncrementModal = this.modalCtrl.create(AdvancedIncrementAddPage, {
+            item: item
+        });
+        advancedIncrementModal.present();
     }
 }
