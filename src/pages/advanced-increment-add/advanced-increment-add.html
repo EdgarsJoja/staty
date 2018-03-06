@@ -1,7 +1,7 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Advanced Increment</ion-title>
-  </ion-navbar>
+    <ion-navbar>
+        <ion-title>Advanced Increment</ion-title>
+    </ion-navbar>
 </ion-header>
 
 
@@ -24,6 +24,11 @@
         <ion-item *ngIf="increment.unit === 'other'">
             <ion-label stacked>Unit Other</ion-label>
             <ion-input [(ngModel)]="increment.unit_other" type="text" name="unit_other"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label>Date & Time</ion-label>
+            <ion-datetime displayFormat="DD/MM/YYYY HH:mm" [(ngModel)]="increment.created_at" name="created_at" [max]="currentDateTime"></ion-datetime>
         </ion-item>
 
         <div padding>
