@@ -6,7 +6,7 @@ import {Storage} from "@ionic/storage";
 */
 export interface IncrementInterface {
     id: string,
-    created_at: String,
+    created_at: string,
     value: number,
     unit: string
 }

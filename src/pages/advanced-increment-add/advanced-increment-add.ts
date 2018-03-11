@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController, Events } from 'ionic-angular';
 
 import moment from 'moment';
 
-import { IncrementInterface } from '../../providers/increment/increment';
+import { IncrementInterface, IncrementProvider } from '../../providers/increment/increment';
 import { ItemInterface } from '../../providers/item/item';
 import { DEFAULT_UNITS } from "../../providers/units/units";
 
@@ -14,7 +14,6 @@ import { DEFAULT_UNITS } from "../../providers/units/units";
 })
 export class AdvancedIncrementAddPage {
 
-    public incrementFormGroup: FormGroup;
     public increment: IncrementInterface;
     public defaultUnits = [];
     public currentDateTime = '';
@@ -24,7 +23,9 @@ export class AdvancedIncrementAddPage {
     constructor(
         public navCtrl: NavController,
         public navParams: NavParams,
-        public viewCtrl: ViewController
+        public viewCtrl: ViewController,
+        private incrementProvider: IncrementProvider,
+        private events: Events
     ) {
         this.item = this.navParams.get('item') || <ItemInterface>{};
 
@@ -49,6 +50,25 @@ export class AdvancedIncrementAddPage {
      * @return {type}  description
      */
     processForm() {
+        this.incrementProvider.addItemIncrement(this.item, this.increment).then((status) => {
+            if (status) {
+                // Need to refresh totals
+                this.events.publish('increments:recalculate');
+                this.viewCtrl.dismiss();
+            } else {
+                // @todo: Add error handling
+            }
+        });
+    }
 
+
+    /**
+     * public toUnix - Convert date to unix timestamp
+     *
+     * @param  {type} date
+     * @return {type}
+     */
+    toUnix(date) {
+        this.increment.created_at = moment(date).unix().toString();
     }
 }

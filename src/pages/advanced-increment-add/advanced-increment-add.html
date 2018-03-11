@@ -28,7 +28,7 @@
 
         <ion-item>
             <ion-label>Date & Time</ion-label>
-            <ion-datetime displayFormat="DD/MM/YYYY HH:mm" [(ngModel)]="increment.created_at" name="created_at" [max]="currentDateTime"></ion-datetime>
+            <ion-datetime displayFormat="DD/MM/YYYY HH:mm" [ngModel]="increment.created_at" (ngModelChange)="toUnix($event)" name="created_at" [max]="currentDateTime"></ion-datetime>
         </ion-item>
 
         <div padding>
