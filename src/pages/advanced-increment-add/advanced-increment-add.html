@@ -1,0 +1,38 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>Advanced Increment</ion-title>
+    </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+    <form (ngSubmit)="processForm()">
+        <ion-item>
+            <ion-label stacked>Value *</ion-label>
+            <ion-input [(ngModel)]="increment.value" type="number" name="value"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label stacked>Unit *</ion-label>
+            <ion-select [(ngModel)]="increment.unit" name="unit">
+                <ion-option *ngFor="let unit of defaultUnits" [value]="unit.value">
+                    {{ unit.label }}
+                </ion-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item *ngIf="increment.unit === 'other'">
+            <ion-label stacked>Unit Other</ion-label>
+            <ion-input [(ngModel)]="increment.unit_other" type="text" name="unit_other"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label>Date & Time</ion-label>
+            <ion-datetime displayFormat="DD/MM/YYYY HH:mm" [ngModel]="increment.created_at" (ngModelChange)="toUnix($event)" name="created_at" [max]="currentDateTime"></ion-datetime>
+        </ion-item>
+
+        <div padding>
+            <button ion-button type="submit" block>Save</button>
+        </div>
+    </form>
+</ion-content>

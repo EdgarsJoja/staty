@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { AlertController, NavController, NavParams, Events } from 'ionic-angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { ItemInterface, ItemProvider } from "../../providers/item/item";
 import { IncrementProvider } from "../../providers/increment/increment";
+import { DEFAULT_UNITS } from "../../providers/units/units";
 
 @Component({
     selector: 'page-item-add',
@@ -44,14 +46,9 @@ export class ItemAddPage {
             id: [this.item.id],
             created_at: [this.item.created_at],
         });
-        this.unitOptions = [
-            {'value': '', 'label': 'None'},
-            {'value': 'kg', 'label': 'Kg'},
-            {'value': 'lbs', 'label': 'Lbs'},
-            {'value': 'km', 'label': 'Km'},
-            {'value': 'miles', 'label': 'Miles'},
-            {'value': 'other', 'label': 'Other'},
-        ];
+
+        this.unitOptions = DEFAULT_UNITS;
+
         this.resetOptions = [
             {'value': 'd', 'label': 'Daily'},
             {'value': 'w', 'label': 'Weekly'},

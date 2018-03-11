@@ -2,11 +2,11 @@ import {Injectable} from '@angular/core';
 import {Storage} from "@ionic/storage";
 
 /**
- * Increment interface
- */
+* Increment interface
+*/
 export interface IncrementInterface {
     id: string,
-    created_at: Date,
+    created_at: string,
     value: number,
     unit: string
 }
@@ -21,51 +21,51 @@ export class IncrementProvider {
     }
 
     /**
-     * Generates storage key for each item increment values
-     *
-     * @param itemId
-     * @returns {string}
-     */
+    * Generates storage key for each item increment values
+    *
+    * @param itemId
+    * @returns {string}
+    */
     private getItemIncrementStorageKey(itemId) {
         return `${INCREMENT_STORAGE_CODE_PREFIX}${itemId}`;
     }
 
     /**
-     * Save item increment data into storage
-     *
-     * @param itemId
-     * @param increments
-     * @returns {Promise<any>}
-     */
+    * Save item increment data into storage
+    *
+    * @param itemId
+    * @param increments
+    * @returns {Promise<any>}
+    */
     public saveItemIncrements(itemId, increments) {
         return this.storage.set(this.getItemIncrementStorageKey(itemId), increments);
     }
 
     /**
-     * Get item increment records
-     *
-     * @param itemId
-     * @returns {Promise<any>}
-     */
+    * Get item increment records
+    *
+    * @param itemId
+    * @returns {Promise<any>}
+    */
     public getItemIncrements(itemId) {
         return this.storage.get(this.getItemIncrementStorageKey(itemId));
     }
 
     /**
-     * Delete all item increments from storage
-     *
-     * @param itemId
-     * @returns {Promise<any>}
-     */
+    * Delete all item increments from storage
+    *
+    * @param itemId
+    * @returns {Promise<any>}
+    */
     public deleteItemIncrements(itemId) {
         return this.storage.set(this.getItemIncrementStorageKey(itemId), []);
     }
 
     /**
-     * Delete all increments from storage
-     *
-     * @returns {Promise<any>}
-     */
+    * Delete all increments from storage
+    *
+    * @returns {Promise<any>}
+    */
     public deleteAllIncrements() {
         let self = this;
         return self.storage.keys().then(keys => {
@@ -78,10 +78,10 @@ export class IncrementProvider {
     }
 
     /**
-     * Check if customer has added any increments
-     *
-     * @returns {Promise<boolean>}
-     */
+    * Check if customer has added any increments
+    *
+    * @returns {Promise<boolean>}
+    */
     public hasAnyIncrements() {
         let hasIncrements = false;
 
@@ -95,19 +95,23 @@ export class IncrementProvider {
     }
 
     /**
-     * Add new item increment.
-     *
-     * @param item
-     * @param {boolean} value
-     * @returns {Promise<any>}
-     */
-    addItemIncrement(item, value = false) {
+    * Add new item increment.
+    *
+    * @param item
+    * @param {IncrementInterface} increment
+    * @returns {Promise<any>}
+    */
+    addItemIncrement(item, increment = <IncrementInterface>{}) {
         return this.getItemIncrements(item.id).then((increments) => {
+            let val = (increment && increment.value) ? increment.value : item.increment,
+                unit = (increment && increment.unit) ? increment.unit : (item.unit === 'other' ? item.unit_other : item.unit),
+                created_at = (increment && increment.created_at) ? increment.created_at : Date.now().toString();
+
             increments.push({
                 id: item.id,
-                value: value ? value : item.increment,
-                unit: item.unit === 'other' ? item.unit_other : item.unit,
-                created_at: Date.now().toString()
+                value: val,
+                unit: unit,
+                created_at: created_at
             });
 
             return this.saveItemIncrements(item.id, increments).then((increments) => {
