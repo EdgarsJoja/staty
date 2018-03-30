@@ -15,6 +15,7 @@ import { IncremementsListComponent } from '../components/incremements-list/incre
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicStorageModule } from '@ionic/storage';
+import { PipesModule } from '../pipes/pipes.module'
 
 import { SuperTabsModule } from 'ionic2-super-tabs';
 import { ItemProvider } from '../providers/item/item';
@@ -39,7 +40,8 @@ import { DateProvider } from '../providers/date/date';
         BrowserModule,
         IonicModule.forRoot(Staty),
         SuperTabsModule.forRoot(),
-        IonicStorageModule.forRoot()
+        IonicStorageModule.forRoot(),
+        PipesModule
     ],
     bootstrap: [IonicApp],
     entryComponents: [

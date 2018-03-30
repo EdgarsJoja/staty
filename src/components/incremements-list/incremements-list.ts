@@ -9,11 +9,14 @@ import { ItemInterface } from '../../providers/item/item';
 @Component({
     selector: 'incremements-list',
     templateUrl: 'incremements-list.html',
-    inputs: ['item']
+    inputs: ['item', 'initialCount']
 })
 export class IncremementsListComponent {
     increments: Array<IncrementInterface> = [];
     item: ItemInterface;
+
+    initialCount: number = 10;
+    showAll: boolean = false;
 
     constructor
     (
@@ -24,18 +27,32 @@ export class IncremementsListComponent {
         private events: Events
     ) {
         this.events.subscribe('increments:recalculate', () => {
-            this.incrementProvider.getItemIncrements(this.item.id).then((increments) => {
-                this.increments = increments;
-            });
+            this.getIncrementsArray();
         });
     }
 
     ngOnInit() {
         // Using square branckets, because otherwise transpile throws warning
         this.item = this['item'];
+        this.initialCount = this['initialCount'];
 
         // Using square branckets, because otherwise transpile throws warning
         this.incrementProvider.getItemIncrements(this.item.id).then((increments) => {
+            this.getIncrementsArray();
+        });
+    }
+
+
+    /**
+     * private getIncrementsArray - Get increments array from storage
+     *
+     * @return {type}
+     */
+    private getIncrementsArray() {
+        this.incrementProvider.getItemIncrements(this.item.id).then((increments) => {
+            if (!this.showAll) {
+                increments = increments.slice(-this.initialCount);
+            }
             this.increments = increments;
         });
     }
@@ -122,4 +139,14 @@ export class IncremementsListComponent {
         advancedIncrementModal.present();
     }
 
+    /**
+     * loadAllIncrements - show all increments
+     *
+     * @return {type}
+     */
+    loadAllIncrements() {
+        this.showAll = true;
+
+        this.events.publish('increments:recalculate');
+    }
 }

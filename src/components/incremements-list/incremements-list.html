@@ -1,6 +1,8 @@
 <ion-list>
-    <ion-item *ngFor="let increment of increments" (click)="showIncrementActions(increment)">
+    <ion-item *ngFor="let increment of increments | reverse" (click)="showIncrementActions(increment)">
         {{ increment.value }} {{ increment.unit }}
         <p margin-top>{{ increment.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
     </ion-item>
 </ion-list>
+
+<button ion-button block outline (click)="loadAllIncrements()" *ngIf="!showAll">Load all</button>
