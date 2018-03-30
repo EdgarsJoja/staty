@@ -5,12 +5,14 @@ import moment from 'moment';
 
 import { IncrementInterface, IncrementProvider } from '../../providers/increment/increment';
 import { ItemInterface } from '../../providers/item/item';
-import { DEFAULT_UNITS } from "../../providers/units/units";
+import { DEFAULT_UNITS, UnitsProvider } from "../../providers/units/units";
+import { DateProvider } from '../../providers/date/date';
 
 @IonicPage()
 @Component({
     selector: 'page-advanced-increment-add',
     templateUrl: 'advanced-increment-add.html',
+    providers: [UnitsProvider]
 })
 export class AdvancedIncrementAddPage {
 
@@ -24,25 +26,30 @@ export class AdvancedIncrementAddPage {
         public navCtrl: NavController,
         public navParams: NavParams,
         public viewCtrl: ViewController,
+        public dateProvider: DateProvider,
+        public unitsProvider: UnitsProvider,
         private incrementProvider: IncrementProvider,
         private events: Events
     ) {
         this.item = this.navParams.get('item') || <ItemInterface>{};
+        this.increment = this.navParams.get('increment') || <IncrementInterface>{};
 
         this.defaultUnits = DEFAULT_UNITS;
 
         // To allow select only past dates
         this.currentDateTime = moment().format('YYYY-MM-DD');
 
+        let unit = this.increment.unit || this.item.unit;
+        const currentTimestamp = Date.now().toString();
+
         this.increment = <IncrementInterface>{
-            id: this.item.id,
-            value: parseFloat(this.item.increment),
-            unit: this.item.unit,
+            id: this.increment.id || null,
+            value: this.increment.value || parseFloat(this.item.increment),
+            unit: this.unitsProvider.isDefaultUnit(unit) ? unit : 'other',
             unit_other: this.item.unit_other,
-            created_at: Date.now().toString()
+            created_at: this.increment.created_at || currentTimestamp
         };
     }
-
 
     /**
      * processForm - Process/Save increment in storage
@@ -61,14 +68,13 @@ export class AdvancedIncrementAddPage {
         });
     }
 
-
     /**
-     * public toUnix - Convert date to unix timestamp
+     * public formatAndSetCreatedAt - Convert date to unix timestamp
      *
      * @param  {type} date
      * @return {type}
      */
-    toUnix(date) {
-        this.increment.created_at = moment(date).unix().toString();
+    formatAndSetCreatedAt(date) {
+        this.increment.created_at = this.dateProvider.toUnix(date);
     }
 }

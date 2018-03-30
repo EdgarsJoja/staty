@@ -10,6 +10,8 @@ import { ItemAddPage } from '../pages/item-add/item-add';
 import { SettingsPage } from '../pages/settings/settings';
 import { AdvancedIncrementAddPage } from '../pages/advanced-increment-add/advanced-increment-add';
 
+import { IncremementsListComponent } from '../components/incremements-list/incremements-list';
+
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicStorageModule } from '@ionic/storage';
@@ -20,6 +22,7 @@ import { IncrementProvider } from '../providers/increment/increment';
 import { ResetIntervalProvider } from '../providers/reset-interval/reset-interval';
 import { SettingsProvider } from '../providers/settings/settings';
 import { UnitsProvider } from '../providers/units/units';
+import { DateProvider } from '../providers/date/date';
 
 @NgModule({
     declarations: [
@@ -29,7 +32,8 @@ import { UnitsProvider } from '../providers/units/units';
         StatisticsPage,
         ItemAddPage,
         SettingsPage,
-        AdvancedIncrementAddPage
+        AdvancedIncrementAddPage,
+        IncremementsListComponent
     ],
     imports: [
         BrowserModule,
@@ -55,7 +59,8 @@ import { UnitsProvider } from '../providers/units/units';
         IncrementProvider,
         ResetIntervalProvider,
         SettingsProvider,
-        UnitsProvider
+        UnitsProvider,
+        DateProvider
     ]
 })
 export class AppModule { }

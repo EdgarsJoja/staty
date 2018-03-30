@@ -14,7 +14,7 @@
 
         <ion-item>
             <ion-label stacked>Unit *</ion-label>
-            <ion-select [(ngModel)]="increment.unit" name="unit">
+            <ion-select [(ngModel)]="increment.unit" name="unit" [disabled]="item.unit === 'other'">
                 <ion-option *ngFor="let unit of defaultUnits" [value]="unit.value">
                     {{ unit.label }}
                 </ion-option>
@@ -23,12 +23,12 @@
 
         <ion-item *ngIf="increment.unit === 'other'">
             <ion-label stacked>Unit Other</ion-label>
-            <ion-input [(ngModel)]="increment.unit_other" type="text" name="unit_other"></ion-input>
+            <ion-input [(ngModel)]="increment.unit_other" type="text" name="unit_other" [disabled]="item.unit === 'other'"></ion-input>
         </ion-item>
 
         <ion-item>
             <ion-label>Date & Time</ion-label>
-            <ion-datetime displayFormat="DD/MM/YYYY HH:mm" [ngModel]="increment.created_at" (ngModelChange)="toUnix($event)" name="created_at" [max]="currentDateTime"></ion-datetime>
+            <ion-datetime displayFormat="DD/MM/YYYY HH:mm" [ngModel]="increment.created_at" (ngModelChange)="formatAndSetCreatedAt($event)" name="created_at" [max]="currentDateTime"></ion-datetime>
         </ion-item>
 
         <div padding>

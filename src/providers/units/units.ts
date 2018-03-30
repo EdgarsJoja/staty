@@ -16,4 +16,10 @@ export class UnitsProvider {
 
     }
 
+    /**
+    *   Check if unit is in default units array
+    */
+    public isDefaultUnit(unit: string): boolean {
+        return (DEFAULT_UNITS.findIndex(item => item.value === unit) !== -1);
+    }
 }
