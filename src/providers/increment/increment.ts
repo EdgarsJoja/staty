@@ -8,7 +8,8 @@ export interface IncrementInterface {
     id: string,
     created_at: string,
     value: number,
-    unit: string
+    unit: string,
+    unit_other: string
 }
 
 export const INCREMENT_STORAGE_CODE_PREFIX = 'item_increment_';
@@ -102,21 +103,76 @@ export class IncrementProvider {
     * @returns {Promise<any>}
     */
     addItemIncrement(item, increment = <IncrementInterface>{}) {
+        if (increment && !increment.id) {
+            // New increment
+            return this.getItemIncrements(item.id).then((increments) => {
+                let id = (increment && increment.id) ? increment.id : Date.now().toString(),
+                    val = (increment && increment.value) ? increment.value : item.increment,
+                    unit = (increment && increment.unit && item.unit !== 'other') ? increment.unit : (item.unit === 'other' ? item.unit_other : item.unit),
+                    created_at = (increment && increment.created_at) ? increment.created_at : Date.now().toString();
+
+                increments.push({
+                    id: id,
+                    value: val,
+                    unit: unit,
+                    created_at: created_at
+                });
+
+                return this.saveItemIncrements(item.id, increments).then((increments) => {
+                    return true;
+                });
+            });
+        }
+
+        // Existing increment
+        return this.updateItemIncrement(item, increment);
+    }
+
+
+    /**
+     * public updateItemIncrement - Update existing item increment
+     *
+     * @param  {type} item                          item to which increment belongs
+     * @param  {type} data = <IncrementInterface>{} new increment data
+     * @return {type}
+     */
+    private updateItemIncrement(item, data = <IncrementInterface>{}) {
         return this.getItemIncrements(item.id).then((increments) => {
-            let val = (increment && increment.value) ? increment.value : item.increment,
-                unit = (increment && increment.unit) ? increment.unit : (item.unit === 'other' ? item.unit_other : item.unit),
-                created_at = (increment && increment.created_at) ? increment.created_at : Date.now().toString();
+            const updateIndex = increments.findIndex(increment => increment.id === data.id);
 
-            increments.push({
-                id: item.id,
-                value: val,
-                unit: unit,
-                created_at: created_at
-            });
+            if (updateIndex !== -1) {
+                data.unit = (data.unit && item.unit !== 'other') ? data.unit : (item.unit === 'other' ? data.unit_other : item.unit),
 
-            return this.saveItemIncrements(item.id, increments).then((increments) => {
-                return true;
-            });
+                increments[updateIndex] = Object.assign(increments[updateIndex], data);
+                return this.saveItemIncrements(item.id, increments).then((increments) => {
+                    return true;
+                });
+            }
+
+            return false;
+        });
+    }
+
+
+    /**
+     * public deleteItemIncrement - Delete single item increment
+     *
+     * @param  {ItemInterface} item        Item whose increment will be deleted
+     * @param  {string} incrementId Id for deleteable increment
+     * @return {type}
+     */
+    public deleteItemIncrement(item, incrementId) {
+        return this.getItemIncrements(item.id).then((increments) => {
+            const deleteIndex = increments.findIndex(increment => increment.id === incrementId);
+
+            if (deleteIndex !== -1) {
+                increments.splice(deleteIndex, 1);
+                return this.saveItemIncrements(item.id, increments).then((increments) => {
+                    return true;
+                });
+            }
+
+            return false;
         });
     }
 }

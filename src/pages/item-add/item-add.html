@@ -66,4 +66,9 @@
     <div *ngIf="item && item.id" padding class="increments">
         <button ion-button block color="danger" (click)="showResetStatisticsConfirm(item)">Reset statistics</button>
     </div>
+
+    <ion-content>
+        <incremements-list [item]="item" [initialCount]="10">
+        </incremements-list>
+    </ion-content>
 </ion-content>
