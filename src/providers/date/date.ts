@@ -18,4 +18,21 @@ export class DateProvider {
     toUnix(date) {
         return moment(date).valueOf().toString();
     }
+
+
+    /**
+     * getFormattedTimePassed - Get timepassed in readable format
+     *
+     * @param  {string} date
+     * @return {string}
+     */
+    getFormattedTimePassed(date) {
+        date = moment(parseInt(date));
+
+        if (date.isValid()) {
+            return date.fromNow();
+        }
+
+        return '';
+    }
 }

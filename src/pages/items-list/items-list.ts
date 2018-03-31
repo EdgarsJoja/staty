@@ -18,6 +18,7 @@ import { ItemInterface, ItemProvider } from '../../providers/item/item';
 import { IncrementProvider } from '../../providers/increment/increment';
 import { ResetIntervalProvider } from '../../providers/reset-interval/reset-interval';
 import { SettingsProvider } from '../../providers/settings/settings';
+import { DateProvider } from '../../providers/date/date';
 
 @IonicPage()
 @Component({
@@ -39,7 +40,8 @@ export class ItemsListPage {
         private resetIntervalProvider: ResetIntervalProvider,
         private settingsProvider: SettingsProvider,
         private events: Events,
-        private modalCtrl: ModalController
+        private modalCtrl: ModalController,
+        private dateProvider: DateProvider
     ) {
         this.recalculateIncrements();
 
@@ -63,13 +65,18 @@ export class ItemsListPage {
      * Calculate currently active reset interval increment.
      *
      * @param {ItemInterface} item
-     * @returns {Promise<number>}
+     * @returns {Promise<object>}
      */
-    getItemTotalIncrementValue(item) {
+    getItemIncrementData(item) {
         let totalIncrementValue = 0;
+        let lastUpdatedAt = null;
+
         return this.incrementProvider.getItemIncrements(item.id).then(increments => {
-            if (!increments) {
-                return totalIncrementValue;
+            if (increments.length === 0) {
+                return {
+                    total: totalIncrementValue,
+                    updated_at: lastUpdatedAt
+                };
             }
 
             return this.settingsProvider.getSettings().then(settings => {
@@ -82,7 +89,16 @@ export class ItemsListPage {
                 });
 
                 // Max 3 decimal places
-                return Math.round(totalIncrementValue * 1000) / 1000;
+                totalIncrementValue = Math.round(totalIncrementValue * 1000) / 1000;
+
+                // Get last updated increment
+                const sortedIncrements = increments.sort((a, b) => a.created_at < b.created_at);
+                lastUpdatedAt = sortedIncrements[0].created_at;
+
+                return {
+                    total: totalIncrementValue,
+                    updated_at: lastUpdatedAt
+                };
             });
         });
     }
@@ -139,10 +155,7 @@ export class ItemsListPage {
 
         this.incrementProvider.addItemIncrement(item).then((status) => {
             if (status) {
-                this.getItemTotalIncrementValue(item).then((value) => {
-                    item.total_increment = value;
-                    item.total_text = this.getItemTotalValueText(item);
-                });
+                this.updateItemIncrementData(item);
             }
         });
     }
@@ -206,10 +219,7 @@ export class ItemsListPage {
             this.items = items || [];
 
             this.items.forEach(item => {
-                this.getItemTotalIncrementValue(item).then(value => {
-                    item.total_increment = value;
-                    item.total_text = this.getItemTotalValueText(item);
-                });
+                this.updateItemIncrementData(item);
             });
         });
     }
@@ -225,5 +235,21 @@ export class ItemsListPage {
             item: item
         });
         advancedIncrementModal.present();
+    }
+
+
+    /**
+     * private updateItemIncrementData - Adds additional data for item
+     *
+     * @param  {type} item
+     * @return {type}
+     */
+    private updateItemIncrementData(item) {
+        this.getItemIncrementData(item).then(data => {
+            item.total_increment = data.total;
+            item.total_text = this.getItemTotalValueText(item);
+
+            item.updated_at = this.dateProvider.getFormattedTimePassed(data.updated_at);
+        });
     }
 }

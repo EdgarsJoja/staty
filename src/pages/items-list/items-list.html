@@ -13,6 +13,11 @@
             </button>
           </ion-col>
         </ion-row>
+        <ion-row>
+            <ion-col>
+                <p *ngIf="item.updated_at">Updated {{ item.updated_at }}</p>
+            </ion-col>
+        </ion-row>
       </ion-grid>
     </ion-item>
   </ion-list>

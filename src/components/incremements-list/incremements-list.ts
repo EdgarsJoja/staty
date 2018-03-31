@@ -50,7 +50,7 @@ export class IncremementsListComponent {
      */
     private getIncrementsArray() {
         this.incrementProvider.getItemIncrements(this.item.id).then((increments) => {
-            if (!this.showAll) {
+            if (!this.showAll && increments && increments.length > 0) {
                 increments = increments.slice(-this.initialCount);
             }
             this.increments = increments;
