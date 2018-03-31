@@ -68,7 +68,7 @@
     </div>
 
     <ion-content>
-        <incremements-list [item]="item" [initialCount]="10">
+        <incremements-list *ngIf="item.id" [item]="item" [initialCount]="10">
         </incremements-list>
     </ion-content>
 </ion-content>

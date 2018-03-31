@@ -15,7 +15,8 @@ export interface ItemInterface {
     unit: string,
     unit_other: string,
     total_increment: number,
-    total_text: string
+    total_text: string,
+    updated_at: string
 }
 
 export const ITEMS_STORAGE_CODE = 'items';
